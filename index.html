@@ -2,122 +2,256 @@
 <html lang="en">
   <head>
     <meta charset="UTF-8" />
-    <link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 32 32'%3E%3Crect width='32' height='32' rx='7' fill='%230C0D10'/%3E%3Ctext x='16' y='22' font-family='Arial' font-size='16' font-weight='700' fill='%23F26A1B' text-anchor='middle'%3EKB%3C/text%3E%3C/svg%3E" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <meta name="description" content="Khandelwal Busar Group — three precision manufacturing firms across Haryana and Rajasthan: automobile sheet metal, wires & strips, and cold-rolled steel coatings." />
+    <link rel="icon" type="image/png" href="/media/img/mark-navy.png" />
+    <meta name="description" content="Khandelwal Busar Group — Khandelwal Busar Industries, KB Wires & Strips and Metal Coatings (India) Ltd. Precision sheet metal, galvanised cable input and cold rolled steel since 1981." />
+    <meta name="theme-color" content="#0a1230" />
     <link rel="preconnect" href="https://fonts.googleapis.com" />
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
-    <link href="https://fonts.googleapis.com/css2?family=Archivo:wght@500;600;700;800&family=Inter:wght@400;500;600&display=swap" rel="stylesheet" />
-    <title>Khandelwal Busar Group — Precision manufacturing</title>
+    <link href="https://fonts.googleapis.com/css2?family=EB+Garamond:ital,wght@0,400;0,500;0,600;1,400&family=Inter:wght@300;400;500;600&display=swap" rel="stylesheet" />
+    <link rel="preload" as="image" href="/media/img/hero-poster.jpg" />
+    <title>Khandelwal Busar Group</title>
   </head>
   <body>
-    <!-- NAV -->
-    <header class="nav" id="nav">
-      <a class="nav__brand" href="#top" aria-label="Khandelwal Busar Group home">
-        <span class="nav__mark">KB</span>
-        <span class="nav__name">Khandelwal Busar <em>Group</em></span>
-      </a>
-      <nav class="nav__pill" aria-label="Primary">
-        <a href="#about">About</a>
-        <a href="#firms">Firms</a>
-        <a href="#map">Network</a>
-        <a href="#contact">Contact</a>
-      </nav>
-      <a class="btn btn--accent nav__cta" href="#firms">Explore the firms</a>
-      <button class="nav__burger" aria-label="Toggle menu" aria-expanded="false"><span></span><span></span></button>
+    <!-- ================= HEADER ================= -->
+    <header class="hdr" id="hdr">
+      <div class="hdr__in">
+        <a class="brand" href="#top" aria-label="Khandelwal Busar Group — home">
+          <img class="brand__mark" src="/media/img/mark-white.png" alt="" width="40" height="32" />
+          <span class="brand__txt">
+            <span class="brand__name">Khandelwal Busar</span>
+            <span class="brand__sub">Group</span>
+          </span>
+        </a>
+        <nav class="hdr__nav" aria-label="Primary">
+          <a href="#group">The Group</a>
+          <a href="#companies">Companies</a>
+          <a href="#capabilities">Capabilities</a>
+          <a href="#leadership">Leadership</a>
+          <a href="#locations">Locations</a>
+        </nav>
+        <a class="hdr__cta" href="#contact">Contact</a>
+        <button class="hdr__menu" aria-label="Open menu" aria-expanded="false" aria-controls="drawer">
+          <span></span><span></span>
+        </button>
+      </div>
     </header>
 
-    <!-- HERO -->
-    <section class="hero" id="top">
-      <canvas class="hero__canvas" aria-hidden="true"></canvas>
-      <div class="hero__grid" aria-hidden="true"></div>
-      <div class="hero__inner">
-        <p class="eyebrow">One group · Three firms · Since 1981</p>
-        <h1 class="hero__title">Precision metal,<br />built across <span>three firms.</span></h1>
-        <p class="hero__lede">
-          Khandelwal Busar Group powers India's automobile, power and telecom industries —
-          from pressed sheet-metal assemblies to galvanised strips and cold-rolled steel finished to the micron.
-        </p>
-        <div class="hero__actions">
-          <a class="btn btn--accent" href="#firms">Meet the three firms</a>
-          <a class="btn btn--ghost" href="#about">What we build</a>
+    <div class="drawer" id="drawer" aria-hidden="true">
+      <nav class="drawer__nav" aria-label="Mobile">
+        <a href="#group"><i>01</i>The Group</a>
+        <a href="#companies"><i>02</i>Companies</a>
+        <a href="#capabilities"><i>03</i>Capabilities</a>
+        <a href="#leadership"><i>04</i>Leadership</a>
+        <a href="#locations"><i>05</i>Locations</a>
+        <a href="#contact"><i>06</i>Contact</a>
+      </nav>
+    </div>
+
+    <main>
+      <!-- ================= HERO ================= -->
+      <section class="hero" id="top">
+        <div class="hero__media" aria-hidden="true">
+          <video class="hero__video" autoplay muted loop playsinline preload="auto" poster="/media/img/hero-poster.jpg">
+            <source src="/media/video/hero-720.mp4" type="video/mp4" media="(max-width: 900px)" />
+            <source src="/media/video/hero-1080.mp4" type="video/mp4" />
+          </video>
         </div>
-      </div>
-      <div class="hero__scroll" aria-hidden="true"><span></span>Scroll</div>
-    </section>
+        <div class="hero__shade" aria-hidden="true"></div>
 
-    <!-- STATS -->
-    <section class="stats" id="stats" aria-label="Group at a glance"></section>
-
-    <!-- ABOUT -->
-    <section class="about" id="about">
-      <p class="section-label">About the group</p>
-      <div class="about__body">
-        <h2>
-          Four decades of precision, held together by one family of firms.
-        </h2>
-        <div class="about__cols">
-          <p>
-            Since 1981, the Khandelwal Busar Group has grown from a single Faridabad press shop into three
-            specialised firms — each with its own plant, certifications and client book, yet drawing on the
-            same discipline of finishing to a tolerance rather than a target.
+        <div class="hero__body wrap">
+          <p class="kicker kicker--light hero__kicker">Faridabad · Alwar · Since 1981</p>
+          <h1 class="hero__title">
+            <span class="ln"><span>Precision in metal,</span></span>
+            <span class="ln"><span><em>from strip to assembly.</em></span></span>
+          </h1>
+          <p class="hero__lede">
+            Three companies, one family. From cold rolled steel to galvanised cable armour to welded vehicle
+            assemblies, we supply India's automotive, power and telecom industries.
           </p>
-          <p>
-            Together we span two states and the full supply chain for metal components: the raw cold-rolled
-            strip, the drawn wire and armour, and the pressed, welded assemblies that reach the
-            production lines of India's largest OEMs.
-          </p>
+          <div class="hero__actions">
+            <a class="btn btn--solid" href="#companies">Our companies <span aria-hidden="true">→</span></a>
+            <a class="btn btn--line" href="#group">About the group</a>
+          </div>
         </div>
-      </div>
-    </section>
 
-    <!-- FIRMS — horizontal scroll -->
-    <section class="firms" id="firms">
-      <div class="firms__track">
-        <article class="panel panel--intro">
-          <p class="section-label">Our firms</p>
-          <h2 class="panel__introtitle">Three plants.<br />One connected network.</h2>
-          <p class="panel__introlede">Scroll to move through each firm — then follow it through to its own site.</p>
-          <div class="panel__introhint" aria-hidden="true">01 — 03 →</div>
-        </article>
-        <!-- firm panels injected here -->
-      </div>
-      <div class="firms__progress" aria-hidden="true"><span></span></div>
-    </section>
+        <div class="wrap"><div class="hero__rail" id="heroRail"></div></div>
 
-    <!-- MAP / NETWORK -->
-    <section class="map" id="map">
-      <div class="map__head">
-        <p class="section-label">The network</p>
-        <h2>Haryana to Rajasthan — four sites, one group.</h2>
-      </div>
-      <div class="map__grid" id="mapGrid"></div>
-    </section>
+        <button class="hero__pause" type="button" aria-label="Pause background video" aria-pressed="false">
+          <svg viewBox="0 0 16 16" width="12" height="12" aria-hidden="true"><rect class="i-pause" x="3" y="2" width="3.5" height="12"/><rect class="i-pause" x="9.5" y="2" width="3.5" height="12"/><path class="i-play" d="M4 2l10 6-10 6z"/></svg>
+        </button>
+      </section>
 
-    <!-- FOOTER -->
-    <footer class="foot" id="contact">
-      <div class="foot__top">
-        <div>
-          <span class="nav__mark">KB</span>
-          <p class="foot__name">Khandelwal Busar Group</p>
-          <p class="foot__tag">Precision metal manufacturing since 1981.</p>
+      <!-- ================= GROUP / INTRO ================= -->
+      <section class="intro" id="group">
+        <div class="wrap intro__grid">
+          <p class="kicker">The Group</p>
+          <div class="intro__main">
+            <p class="intro__statement reveal">
+              Founded in Faridabad in 1981, the Khandelwal Busar Group has grown into three specialist manufacturers
+              that cover the whole metal supply chain: <em>the strip, the wire and the finished assembly.</em>
+            </p>
+            <div class="intro__cols reveal">
+              <p>
+                Khandelwal Busar Industries started as a press shop supplying Maruti Suzuki. It now makes chassis,
+                axles, cabins and brackets for many of India's vehicle makers. Its Alwar unit produces the galvanised
+                tape and wire that armour the country's power and telecom cables.
+              </p>
+              <p>
+                Metal Coatings (India) Ltd was promoted by the Khandelwal family in 1994 and is listed on the BSE. It
+                cold rolls steel strip next door at Sector 59. Every company runs its own plant and certifications,
+                and all of them work to the same discipline.
+              </p>
+            </div>
+          </div>
         </div>
-        <nav class="foot__links" aria-label="Firms">
-          <p class="foot__col-h">Firms</p>
-          <a href="https://khandelwalbusar.com" target="_blank" rel="noopener">Khandelwal Busar Industries ↗</a>
-          <a href="#firms">KB Wires & Strips · Alwar</a>
-          <a href="https://www.mcil.net" target="_blank" rel="noopener">Metal Coatings (India) Ltd ↗</a>
-        </nav>
-        <nav class="foot__links" aria-label="Group">
-          <p class="foot__col-h">Group</p>
-          <a href="#about">About</a>
-          <a href="#firms">Firms</a>
-          <a href="#map">Network</a>
-        </nav>
-      </div>
-      <div class="foot__bottom">
-        <span>© <span id="year"></span> Khandelwal Busar Group</span>
-        <span>Faridabad, Haryana · Alwar, Rajasthan · India</span>
+        <div class="wrap">
+          <dl class="stats" id="stats"></dl>
+        </div>
+      </section>
+
+      <!-- ================= COMPANIES (horizontal) ================= -->
+      <section class="cos" id="companies">
+        <div class="cos__head wrap">
+          <p class="kicker kicker--light">Our companies</p>
+          <h2 class="h2">Three plants. One standard.</h2>
+          <div class="cos__count" aria-hidden="true"><span id="cosNow">01</span> / 03</div>
+        </div>
+        <div class="cos__pin">
+          <div class="cos__viewport">
+            <div class="cos__track" id="cosTrack"></div>
+          </div>
+          <div class="wrap cos__barwrap" aria-hidden="true"><div class="cos__bar"><span id="cosBar"></span></div></div>
+        </div>
+      </section>
+
+      <!-- ================= CAPABILITIES ================= -->
+      <section class="caps" id="capabilities">
+        <div class="wrap">
+          <div class="sec-head">
+            <p class="kicker">Capabilities</p>
+            <h2 class="h2">From coil to component, in-house.</h2>
+            <p class="sec-head__lede">
+              Every stage, from tooling and pressing to welding, machining, galvanising and cold rolling, runs on our
+              own floors and is checked on our own lines.
+            </p>
+          </div>
+          <div class="caps__grid" id="capsGrid"></div>
+        </div>
+      </section>
+
+      <!-- ================= QUOTE BAND ================= -->
+      <section class="band" aria-label="Our standard">
+        <div class="band__img" aria-hidden="true"><img src="/media/img/mcil-coil-hall.jpg" alt="" loading="lazy" /></div>
+        <div class="band__shade" aria-hidden="true"></div>
+        <div class="wrap band__in">
+          <blockquote class="band__quote reveal">
+            “Finished to a tolerance,<br /><em>rather than a target.”</em>
+          </blockquote>
+          <p class="band__src">The standard across every Khandelwal Busar plant</p>
+        </div>
+      </section>
+
+      <!-- ================= LEADERSHIP ================= -->
+      <section class="lead" id="leadership">
+        <div class="wrap lead__grid">
+          <div class="sec-head sec-head--stack">
+            <p class="kicker">Leadership</p>
+            <h2 class="h2">A family business, run as an institution.</h2>
+            <p class="sec-head__lede">
+              The Khandelwal family has led the group for decades. Each company has its own management team and
+              governance. MCIL reports to a board on which independent directors outnumber executive ones.
+            </p>
+          </div>
+          <div class="lead__people" id="leaders"></div>
+        </div>
+      </section>
+
+      <!-- ================= CLIENTS + CERTS ================= -->
+      <section class="trust" aria-labelledby="trustTitle">
+        <div class="wrap">
+          <div class="trust__head">
+            <p class="kicker">Customers</p>
+            <h2 class="h2" id="trustTitle">Trusted by India's leading manufacturers.</h2>
+          </div>
+          <ul class="logos" id="logos"></ul>
+          <p class="trust__note">Logos are the property of their respective owners and identify customers of group companies.</p>
+          <ul class="certs" id="certs"></ul>
+        </div>
+      </section>
+
+      <!-- ================= LOCATIONS ================= -->
+      <section class="locs" id="locations">
+        <div class="wrap">
+          <div class="sec-head sec-head--light">
+            <p class="kicker kicker--light">Locations</p>
+            <h2 class="h2">Haryana and Rajasthan.</h2>
+          </div>
+          <div class="locs__grid" id="sites"></div>
+        </div>
+      </section>
+
+      <!-- ================= CTA ================= -->
+      <section class="cta" id="contact">
+        <div class="wrap cta__in">
+          <div>
+            <p class="kicker">Work with us</p>
+            <h2 class="cta__title">Source sheet metal, cable input and cold rolled steel from one group.</h2>
+          </div>
+          <div class="cta__links">
+            <a class="cta__row" href="mailto:business@khandelwalbusar.com">
+              <span class="cta__lbl">Automotive components</span>
+              <span class="cta__val">business@khandelwalbusar.com</span>
+              <span class="cta__arw" aria-hidden="true">→</span>
+            </a>
+            <a class="cta__row" href="mailto:alwar@khandelwalbusar.com">
+              <span class="cta__lbl">Galvanised tape &amp; wire</span>
+              <span class="cta__val">alwar@khandelwalbusar.com</span>
+              <span class="cta__arw" aria-hidden="true">→</span>
+            </a>
+            <a class="cta__row" href="mailto:info@mcilindia.net">
+              <span class="cta__lbl">Cold rolled &amp; HRPO steel</span>
+              <span class="cta__val">info@mcilindia.net</span>
+              <span class="cta__arw" aria-hidden="true">→</span>
+            </a>
+          </div>
+        </div>
+      </section>
+    </main>
+
+    <!-- ================= FOOTER ================= -->
+    <footer class="ftr">
+      <div class="wrap">
+        <div class="ftr__top">
+          <div class="ftr__brand">
+            <img src="/media/img/mark-white.png" alt="" width="56" height="45" />
+            <p class="ftr__name">Khandelwal Busar Group</p>
+            <p class="ftr__tag">Precision metal manufacturing since 1981.</p>
+          </div>
+          <div class="ftr__col">
+            <p class="ftr__h">Companies</p>
+            <a href="https://khandelwalbusar.com" target="_blank" rel="noopener">Khandelwal Busar Industries ↗</a>
+            <a href="https://khandelwalbusar.com/products?cat=wires" target="_blank" rel="noopener">KB Wires &amp; Strips ↗</a>
+            <a href="https://www.mcil.net" target="_blank" rel="noopener">Metal Coatings (India) Ltd ↗</a>
+          </div>
+          <div class="ftr__col">
+            <p class="ftr__h">Group</p>
+            <a href="#group">About</a>
+            <a href="#capabilities">Capabilities</a>
+            <a href="#leadership">Leadership</a>
+            <a href="#locations">Locations</a>
+          </div>
+          <div class="ftr__col">
+            <p class="ftr__h">Contact</p>
+            <a href="tel:+919999973404">+91 99999 73404</a>
+            <a href="mailto:info@khandelwalbusar.com">info@khandelwalbusar.com</a>
+            <span>Plots 112 &amp; 113, Sector 59,<br />Faridabad 121004, Haryana</span>
+          </div>
+        </div>
+        <div class="ftr__bot">
+          <span>© <span id="year"></span> Khandelwal Busar Group</span>
+          <span>Metal Coatings (India) Ltd · BSE 531810</span>
+        </div>
       </div>
     </footer>
 
