@@ -97,3 +97,59 @@ export const clients = [
   ["Caparo", W + "caparo_img.png"],
   ["Delton Cables", W + "Delton_Cables.png"],
 ];
+
+// Milestones from the KBI "Our Journey" timeline (khandelwalbusar.com/about_us).
+// Placeholder set until the final list is supplied.
+export const milestones = [
+  {
+    year: "1981",
+    title: "Established",
+    points: [
+      "Founded in Faridabad, Haryana as Kochar Agro Industries.",
+      "Partnered with Maruti Suzuki India Limited from the start.",
+    ],
+    tags: ["Faridabad", "Maruti Suzuki"],
+  },
+  {
+    year: "1995",
+    title: "Major milestone",
+    points: ["Association with VE Commercial Vehicles (Volvo Eicher) and Escorts Kubota."],
+    tags: ["Commercial vehicles", "Tractors"],
+  },
+  {
+    year: "2005",
+    title: "Family takeover",
+    points: ["The Khandelwal family acquired KBI."],
+    tags: ["Khandelwal family"],
+  },
+  {
+    year: "2007",
+    title: "CNH Industrial",
+    points: ["Partnership with CNH Industrial, a global agricultural and construction equipment leader."],
+    tags: ["New Holland", "Agri & construction"],
+  },
+  {
+    year: "2008",
+    title: "Alwar expansion",
+    points: ["New plant in Alwar, Rajasthan for galvanised steel tape and wire."],
+    tags: ["Alwar", "Cable input"],
+  },
+  {
+    year: "2022",
+    title: "Bold expansion",
+    points: ["Partnership with Kobelco India, a leading excavator maker."],
+    tags: ["Construction equipment"],
+  },
+  {
+    year: "2023",
+    title: "Defence sector",
+    points: ["Partnered with Mahindra Defence Systems."],
+    tags: ["Defence"],
+  },
+  {
+    year: "2024",
+    title: "Future-ready",
+    points: ["Entered electric-vehicle components with Euler Motors."],
+    tags: ["Electric vehicles"],
+  },
+];
