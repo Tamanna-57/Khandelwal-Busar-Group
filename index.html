@@ -1,0 +1,126 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 32 32'%3E%3Crect width='32' height='32' rx='7' fill='%230C0D10'/%3E%3Ctext x='16' y='22' font-family='Arial' font-size='16' font-weight='700' fill='%23F26A1B' text-anchor='middle'%3EKB%3C/text%3E%3C/svg%3E" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <meta name="description" content="Khandelwal Busar Group — three precision manufacturing firms across Haryana and Rajasthan: automobile sheet metal, wires & strips, and cold-rolled steel coatings." />
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link href="https://fonts.googleapis.com/css2?family=Archivo:wght@500;600;700;800&family=Inter:wght@400;500;600&display=swap" rel="stylesheet" />
+    <title>Khandelwal Busar Group — Precision manufacturing</title>
+  </head>
+  <body>
+    <!-- NAV -->
+    <header class="nav" id="nav">
+      <a class="nav__brand" href="#top" aria-label="Khandelwal Busar Group home">
+        <span class="nav__mark">KB</span>
+        <span class="nav__name">Khandelwal Busar <em>Group</em></span>
+      </a>
+      <nav class="nav__pill" aria-label="Primary">
+        <a href="#about">About</a>
+        <a href="#firms">Firms</a>
+        <a href="#map">Network</a>
+        <a href="#contact">Contact</a>
+      </nav>
+      <a class="btn btn--accent nav__cta" href="#firms">Explore the firms</a>
+      <button class="nav__burger" aria-label="Toggle menu" aria-expanded="false"><span></span><span></span></button>
+    </header>
+
+    <!-- HERO -->
+    <section class="hero" id="top">
+      <canvas class="hero__canvas" aria-hidden="true"></canvas>
+      <div class="hero__grid" aria-hidden="true"></div>
+      <div class="hero__inner">
+        <p class="eyebrow">One group · Three firms · Since 1981</p>
+        <h1 class="hero__title">Precision metal,<br />built across <span>three firms.</span></h1>
+        <p class="hero__lede">
+          Khandelwal Busar Group powers India's automobile, power and telecom industries —
+          from pressed sheet-metal assemblies to galvanised strips and cold-rolled steel finished to the micron.
+        </p>
+        <div class="hero__actions">
+          <a class="btn btn--accent" href="#firms">Meet the three firms</a>
+          <a class="btn btn--ghost" href="#about">What we build</a>
+        </div>
+      </div>
+      <div class="hero__scroll" aria-hidden="true"><span></span>Scroll</div>
+    </section>
+
+    <!-- STATS -->
+    <section class="stats" id="stats" aria-label="Group at a glance"></section>
+
+    <!-- ABOUT -->
+    <section class="about" id="about">
+      <p class="section-label">About the group</p>
+      <div class="about__body">
+        <h2>
+          Four decades of precision, held together by one family of firms.
+        </h2>
+        <div class="about__cols">
+          <p>
+            Since 1981, the Khandelwal Busar Group has grown from a single Faridabad press shop into three
+            specialised firms — each with its own plant, certifications and client book, yet drawing on the
+            same discipline of finishing to a tolerance rather than a target.
+          </p>
+          <p>
+            Together we span two states and the full supply chain for metal components: the raw cold-rolled
+            strip, the drawn wire and armour, and the pressed, welded assemblies that reach the
+            production lines of India's largest OEMs.
+          </p>
+        </div>
+      </div>
+    </section>
+
+    <!-- FIRMS — horizontal scroll -->
+    <section class="firms" id="firms">
+      <div class="firms__track">
+        <article class="panel panel--intro">
+          <p class="section-label">Our firms</p>
+          <h2 class="panel__introtitle">Three plants.<br />One connected network.</h2>
+          <p class="panel__introlede">Scroll to move through each firm — then follow it through to its own site.</p>
+          <div class="panel__introhint" aria-hidden="true">01 — 03 →</div>
+        </article>
+        <!-- firm panels injected here -->
+      </div>
+      <div class="firms__progress" aria-hidden="true"><span></span></div>
+    </section>
+
+    <!-- MAP / NETWORK -->
+    <section class="map" id="map">
+      <div class="map__head">
+        <p class="section-label">The network</p>
+        <h2>Haryana to Rajasthan — four sites, one group.</h2>
+      </div>
+      <div class="map__grid" id="mapGrid"></div>
+    </section>
+
+    <!-- FOOTER -->
+    <footer class="foot" id="contact">
+      <div class="foot__top">
+        <div>
+          <span class="nav__mark">KB</span>
+          <p class="foot__name">Khandelwal Busar Group</p>
+          <p class="foot__tag">Precision metal manufacturing since 1981.</p>
+        </div>
+        <nav class="foot__links" aria-label="Firms">
+          <p class="foot__col-h">Firms</p>
+          <a href="https://khandelwalbusar.com" target="_blank" rel="noopener">Khandelwal Busar Industries ↗</a>
+          <a href="#firms">KB Wires & Strips · Alwar</a>
+          <a href="https://www.mcil.net" target="_blank" rel="noopener">Metal Coatings (India) Ltd ↗</a>
+        </nav>
+        <nav class="foot__links" aria-label="Group">
+          <p class="foot__col-h">Group</p>
+          <a href="#about">About</a>
+          <a href="#firms">Firms</a>
+          <a href="#map">Network</a>
+        </nav>
+      </div>
+      <div class="foot__bottom">
+        <span>© <span id="year"></span> Khandelwal Busar Group</span>
+        <span>Faridabad, Haryana · Alwar, Rajasthan · India</span>
+      </div>
+    </footer>
+
+    <script type="module" src="/src/main.js"></script>
+  </body>
+</html>
