@@ -1,224 +1,197 @@
 import "./style.css";
 import { gsap } from "gsap";
 import { ScrollTrigger } from "gsap/ScrollTrigger";
-import { group, firms } from "./data.js";
+import { group, firms, chain, capabilities, leaders, clients, certs, sites } from "./data.js";
 
 gsap.registerPlugin(ScrollTrigger);
 
-const reduceMotion = window.matchMedia("(prefers-reduced-motion: reduce)").matches;
 const $ = (s, r = document) => r.querySelector(s);
 const $$ = (s, r = document) => [...r.querySelectorAll(s)];
+const reduceMotion = window.matchMedia("(prefers-reduced-motion: reduce)").matches;
 
-/* ---------- year ---------- */
+/* ------------------------------------------------------------
+   Render content
+   ------------------------------------------------------------ */
 $("#year").textContent = new Date().getFullYear();
 
-/* ---------- stats ---------- */
-$("#stats").innerHTML = group.stats
-  .map((s) => `<div class="stat reveal"><div class="stat__v">${s.value}</div><div class="stat__l">${s.label}</div></div>`)
+$("#heroCos").innerHTML = firms
+  .map((f) => `<li><a href="#co-${f.id}" data-co="${f.id}"><b>${f.name}</b><span>${f.kicker} · ${f.location.split(",")[0]}</span></a></li>`)
   .join("");
 
-/* ---------- firm panels ---------- */
-const track = $(".firms__track");
-track.insertAdjacentHTML(
-  "beforeend",
-  firms
-    .map((f) => {
-      const visit = f.live
-        ? `<a class="firm__visit" href="${f.url}" target="_blank" rel="noopener">Visit ${f.city} site <span aria-hidden="true">↗</span></a>`
-        : `<a class="firm__visit" href="${f.url}">View division</a><span class="firm__soon">Dedicated site in progress</span>`;
-      return `
-      <article class="panel firm-panel" style="--fa:${f.accent};--fa-soft:${f.accentSoft}">
-        <div class="firm__wash"></div>
-        <span class="firm__i">${f.index}</span>
-        <div class="firm">
-          <div class="firm__text">
-            <span class="firm__kicker">${f.kicker}</span>
-            <h3 class="firm__name">${f.name}</h3>
-            <p class="firm__place"><b>${f.city}</b>, ${f.state} · ${f.since}</p>
-            <p class="firm__blurb">${f.blurb}</p>
-            <div class="firm__meta">
-              <div class="firm__row">
-                <h4>Products</h4>
-                <div class="chips">${f.products.map((p) => `<span class="chip">${p}</span>`).join("")}</div>
-              </div>
-              <div class="firm__row">
-                <h4>Standards</h4>
-                <div class="chips">${f.certs.map((c) => `<span class="chip chip--accent">${c}</span>`).join("")}</div>
-              </div>
-            </div>
-            <div class="firm__actions">${visit}</div>
-          </div>
-          <div class="firm__visual">
-            <div class="firm__frame">
-              <span class="firm__tag">${f.city} · ${f.state}</span>
-              <img src="${f.image}" alt="${f.name} — ${f.kicker}" loading="lazy" />
-            </div>
-          </div>
-        </div>
-      </article>`;
-    })
-    .join("")
-);
-
-/* ---------- map / network ---------- */
-const sites = [
-  { city: "Faridabad", state: "Haryana", firm: "Khandelwal Busar Industries — automobile sheet metal", a: firms[0].accent, soft: firms[0].accentSoft },
-  { city: "Alwar", state: "Rajasthan", firm: "KB Wires & Strips — cable input & armouring", a: firms[1].accent, soft: firms[1].accentSoft },
-  { city: "Faridabad", state: "Haryana", firm: "Metal Coatings (India) Ltd — cold-rolled strips", a: firms[2].accent, soft: firms[2].accentSoft },
-];
-$("#mapGrid").innerHTML = sites
+$("#chain").innerHTML = chain
   .map(
-    (s) => `<div class="site reveal" style="--site-a:${s.a};--site-soft:${s.soft}">
-      <span class="site__dot"></span>
-      <div class="site__city">${s.city}</div>
-      <div class="site__state">${s.state}</div>
-      <div class="site__firm">${s.firm}</div>
-    </div>`
+    (c, i) => `<li class="chain__step${i > 0 && i < chain.length - 1 ? " is-group" : ""}">
+      <span class="chain__n">${String(i + 1).padStart(2, "0")}</span>
+      <p class="chain__t">${c.step}</p>
+      <p class="chain__d">${c.detail}</p>
+      <p class="chain__w">${c.who}</p>
+    </li>`
   )
   .join("");
 
-/* ---------- nav: stuck + burger ---------- */
-const nav = $("#nav");
-const onScroll = () => nav.classList.toggle("is-stuck", window.scrollY > 40);
+$("#cosTrack").innerHTML = firms
+  .map(
+    (f) => `<article class="co" id="co-${f.id}">
+      <div class="co__media"><img src="${f.image}" alt="${f.alt}" loading="lazy" /></div>
+      <div class="co__text">
+        <p class="co__kicker"><span>${f.kicker}</span><span>${f.since}</span></p>
+        <h3 class="co__name">${f.name}</h3>
+        <p class="co__loc">${f.location}</p>
+        <p class="co__blurb">${f.blurb}</p>
+        <dl class="co__specs">${f.specs.map(([k, v]) => `<div class="co__spec"><dt>${k}</dt><dd>${v}</dd></div>`).join("")}</dl>
+        <a class="btn btn--blue co__link" href="${f.url}" target="_blank" rel="noopener">Visit ${f.linkLabel} ↗</a>
+      </div>
+    </article>`
+  )
+  .join("");
+
+$("#capsGrid").innerHTML = capabilities
+  .map(
+    (c) => `<article class="cap">
+      <div class="cap__img"><img src="${c.image}" alt="${c.title} at ${c.firm}" loading="lazy" /></div>
+      <div class="cap__meta"><h3 class="cap__t">${c.title}</h3><span class="cap__f">${c.firm}</span></div>
+      <p class="cap__p">${c.text}</p>
+    </article>`
+  )
+  .join("");
+
+$("#stats").innerHTML = group.stats
+  .map((s) => `<div class="stat"><dt>${s.label}</dt><dd>${s.value}${s.unit ? `<small>${s.unit}</small>` : ""}</dd></div>`)
+  .join("");
+
+$("#logos").innerHTML = clients.map(([n, src]) => `<li><img src="${src}" alt="${n}" loading="lazy" /></li>`).join("");
+
+$("#certs").innerHTML = certs.map(([c, d]) => `<li><b>${c}</b><span>${d}</span></li>`).join("");
+
+$("#leaders").innerHTML = leaders
+  .map(
+    (p) => `<figure class="person">
+      <div class="person__img"><img src="${p.image}" alt="${p.name}" loading="lazy" /></div>
+      <figcaption>
+        <p class="person__n">${p.name}</p>
+        <p class="person__r">${p.role}</p>
+        ${p.note ? `<p class="person__p">${p.note}</p>` : ""}
+      </figcaption>
+    </figure>`
+  )
+  .join("");
+
+$("#sites").innerHTML = sites
+  .map(
+    (s) => `<article class="site">
+      <div class="site__img"><img src="${s.image}" alt="${s.label}" loading="lazy" /></div>
+      <div class="site__body">
+        <p class="site__lbl">${s.label}</p>
+        <h3 class="site__city">${s.city}</h3>
+        <p class="site__addr">${s.address}</p>
+        <p class="site__ct">${s.contact}</p>
+      </div>
+    </article>`
+  )
+  .join("");
+
+/* ------------------------------------------------------------
+   Header, mobile menu, active link
+   ------------------------------------------------------------ */
+const hdr = $("#hdr");
+const onScroll = () => hdr.classList.toggle("is-scrolled", window.scrollY > 8);
 onScroll();
 window.addEventListener("scroll", onScroll, { passive: true });
 
-const burger = $(".nav__burger");
-const pill = $(".nav__pill");
-burger.addEventListener("click", () => {
-  const open = pill.classList.toggle("is-open");
-  burger.setAttribute("aria-expanded", String(open));
-});
-$$(".nav__pill a").forEach((a) => a.addEventListener("click", () => pill.classList.remove("is-open")));
+const menuBtn = $(".hdr__menu");
+const drawer = $("#drawer");
+const setDrawer = (open) => {
+  drawer.hidden = !open;
+  menuBtn.setAttribute("aria-expanded", String(open));
+  menuBtn.setAttribute("aria-label", open ? "Close menu" : "Open menu");
+};
+menuBtn.addEventListener("click", () => setDrawer(drawer.hidden));
+$$("#drawer a").forEach((a) => a.addEventListener("click", () => setDrawer(false)));
+window.addEventListener("keydown", (e) => e.key === "Escape" && setDrawer(false));
 
-/* ---------- reveal on scroll ---------- */
-const io = new IntersectionObserver(
-  (entries) => entries.forEach((e) => e.isIntersecting && e.target.classList.add("in")),
-  { threshold: 0.15 }
+const navLinks = $$(".hdr__nav a");
+const navIO = new IntersectionObserver(
+  (entries) =>
+    entries.forEach((e) => {
+      if (e.isIntersecting) navLinks.forEach((a) => a.classList.toggle("is-active", a.getAttribute("href") === "#" + e.target.id));
+    }),
+  { rootMargin: "-45% 0px -50% 0px" }
 );
-$$(".reveal").forEach((el) => io.observe(el));
+["companies", "capabilities", "customers", "leadership", "locations"].forEach((id) => navIO.observe(document.getElementById(id)));
 
-/* ============================================================
-   Horizontal scroll for the firms section
-   ============================================================ */
-function setupHorizontal() {
-  const section = $(".firms");
-  const panels = $$(".panel", track);
-  const bar = $(".firms__progress span");
-  const mq = window.matchMedia("(min-width: 901px)");
+/* ------------------------------------------------------------
+   Hero video
+   ------------------------------------------------------------ */
+const video = $(".hero__video");
+const pauseBtn = $(".hero__pause");
+const setPaused = (paused) => {
+  paused ? video.pause() : video.play().catch(() => {});
+  pauseBtn.setAttribute("aria-pressed", String(paused));
+  pauseBtn.setAttribute("aria-label", paused ? "Play background video" : "Pause background video");
+};
+if (reduceMotion) setPaused(true);
+pauseBtn.addEventListener("click", () => setPaused(!video.paused));
 
-  if (!mq.matches) {
-    section.classList.add("no-scroll");
-    return;
-  }
+/* ------------------------------------------------------------
+   Motion: one load moment + the company sequence
+   ------------------------------------------------------------ */
+if (!reduceMotion) {
+  gsap.from(".slab", { yPercent: 12, duration: 1.1, ease: "power3.out" });
+  gsap.from(".slab__in > *", { y: 18, opacity: 0, duration: 0.9, ease: "power3.out", stagger: 0.08, delay: 0.2 });
+}
 
-  const getScrollX = () => track.scrollWidth - window.innerWidth;
+const cos = $(".cos");
+const track = $("#cosTrack");
+const bar = $("#cosBar");
+const now = $("#cosNow");
+const mm = gsap.matchMedia();
+
+mm.add("(min-width: 1024px) and (min-height: 680px) and (prefers-reduced-motion: no-preference)", () => {
+  cos.classList.remove("is-stacked");
+  const panels = $$(".co", track);
+  const n = panels.length;
+  const dist = () => track.scrollWidth - window.innerWidth;
 
   const tween = gsap.to(track, {
-    x: () => -getScrollX(),
+    x: () => -dist(),
     ease: "none",
     scrollTrigger: {
-      trigger: section,
-      start: "top top",
-      end: () => "+=" + getScrollX(),
+      trigger: ".cos__pin",
+      start: () => `top ${hdr.offsetHeight + 24}px`,
+      end: () => "+=" + dist(),
       pin: true,
-      scrub: reduceMotion ? true : 0.6,
+      scrub: 0.6,
       invalidateOnRefresh: true,
       anticipatePin: 1,
       onUpdate: (self) => {
-        if (bar) {
-          bar.style.width = (self.progress * 100).toFixed(1) + "%";
-          const i = Math.min(panels.length - 1, Math.round(self.progress * (panels.length - 1)));
-          const accent = panels[i]?.style.getPropertyValue("--fa") || "var(--amber)";
-          bar.style.background = accent.trim() || "var(--amber)";
-        }
+        bar.style.transform = `translateX(${self.progress * (n - 1) * 100}%)`;
+        now.textContent = String(Math.round(self.progress * (n - 1)) + 1);
       },
     },
   });
 
-  // subtle parallax lift on each firm's visual as it enters center
-  if (!reduceMotion) {
-    $$(".firm-panel").forEach((p) => {
-      const img = $(".firm__frame img", p);
-      gsap.fromTo(
-        img,
-        { yPercent: 8 },
-        {
-          yPercent: -8,
-          ease: "none",
-          scrollTrigger: {
-            trigger: p,
-            containerAnimation: tween,
-            start: "left right",
-            end: "right left",
-            scrub: true,
-          },
-        }
-      );
+  panels.forEach((p) => {
+    gsap.fromTo($(".co__media img", p), { scale: 1.12, xPercent: -4 }, {
+      scale: 1.12, xPercent: 4, ease: "none",
+      scrollTrigger: { trigger: p, containerAnimation: tween, start: "left right", end: "right left", scrub: true },
     });
-  }
-}
-setupHorizontal();
+  });
 
-/* ============================================================
-   Hero particle field — drifting steel filings + spark lines
-   ============================================================ */
-function heroField() {
-  const canvas = $(".hero__canvas");
-  if (!canvas) return;
-  const ctx = canvas.getContext("2d");
-  let w, h, dpr, pts, raf;
-  const COUNT = () => Math.min(130, Math.floor(window.innerWidth / 11));
+  const jump = (e) => {
+    const i = firms.findIndex((f) => f.id === e.currentTarget.dataset.co);
+    const st = tween.scrollTrigger;
+    e.preventDefault();
+    window.scrollTo({ top: st.start + (st.end - st.start) * (i / (n - 1)) + 2, behavior: "smooth" });
+  };
+  const links = $$("#heroCos a");
+  links.forEach((a) => a.addEventListener("click", jump));
+  return () => {
+    links.forEach((a) => a.removeEventListener("click", jump));
+    cos.classList.add("is-stacked");
+  };
+});
+mm.add("(max-width: 1023px), (max-height: 679px), (prefers-reduced-motion: reduce)", () => {
+  cos.classList.add("is-stacked");
+});
 
-  function resize() {
-    dpr = Math.min(window.devicePixelRatio || 1, 2);
-    w = canvas.width = window.innerWidth * dpr;
-    h = canvas.height = canvas.offsetHeight * dpr;
-    canvas.style.width = "100%";
-    pts = Array.from({ length: COUNT() }, () => ({
-      x: Math.random() * w,
-      y: Math.random() * h,
-      vx: (Math.random() - 0.5) * 0.18 * dpr,
-      vy: (Math.random() - 0.5) * 0.18 * dpr,
-      r: (Math.random() * 1.4 + 0.4) * dpr,
-    }));
-  }
-
-  function frame() {
-    ctx.clearRect(0, 0, w, h);
-    const linkDist = 120 * dpr;
-    for (let i = 0; i < pts.length; i++) {
-      const p = pts[i];
-      p.x += p.vx; p.y += p.vy;
-      if (p.x < 0 || p.x > w) p.vx *= -1;
-      if (p.y < 0 || p.y > h) p.vy *= -1;
-      ctx.beginPath();
-      ctx.arc(p.x, p.y, p.r, 0, Math.PI * 2);
-      ctx.fillStyle = "rgba(242,106,27,0.55)";
-      ctx.fill();
-      for (let j = i + 1; j < pts.length; j++) {
-        const q = pts[j];
-        const dx = p.x - q.x, dy = p.y - q.y;
-        const d = Math.hypot(dx, dy);
-        if (d < linkDist) {
-          ctx.beginPath();
-          ctx.moveTo(p.x, p.y);
-          ctx.lineTo(q.x, q.y);
-          ctx.strokeStyle = `rgba(154,160,171,${(1 - d / linkDist) * 0.22})`;
-          ctx.lineWidth = dpr * 0.6;
-          ctx.stroke();
-        }
-      }
-    }
-    raf = requestAnimationFrame(frame);
-  }
-
-  resize();
-  window.addEventListener("resize", () => { cancelAnimationFrame(raf); resize(); if (!reduceMotion) frame(); });
-  if (reduceMotion) { frame(); cancelAnimationFrame(raf); } // draw one static frame
-  else frame();
-}
-heroField();
-
-/* keep layout correct after fonts/images load */
 window.addEventListener("load", () => ScrollTrigger.refresh());
