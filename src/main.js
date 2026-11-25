@@ -1,7 +1,7 @@
 import "./style.css";
 import { gsap } from "gsap";
 import { ScrollTrigger } from "gsap/ScrollTrigger";
-import { about, firms, clients } from "./data.js";
+import { about, firms, clients, milestones } from "./data.js";
 
 gsap.registerPlugin(ScrollTrigger);
 
@@ -58,17 +58,23 @@ $("#cosDots").innerHTML = firms
   .map((f, i) => `<button type="button" role="tab" aria-label="${f.name}" aria-selected="${i === 0}" data-i="${i}"></button>`)
   .join("");
 
-$("#enqGrid").innerHTML = firms
+/* Our story timeline */
+const storyEl = $("#story");
+storyEl.style.setProperty("--years", milestones.length);
+$("#storyYears").insertAdjacentHTML(
+  "beforeend",
+  milestones
+    .map((m, i) => `<button type="button" class="story__year" aria-controls="ms-${i}" ${i === 0 ? 'aria-current="step"' : ""} data-i="${i}">${m.year}</button>`)
+    .join("")
+);
+$("#storyList").innerHTML = milestones
   .map(
-    (f, i) => `<li class="enq__item">
-      <div class="enq__top"><span>${pad2(i + 1)}</span><span>${f.category.split(" · ")[0]}</span></div>
-      <h3 class="enq__name">${f.name}</h3>
-      <p class="enq__what">${f.enquiry.what}</p>
-      <div class="enq__img"><img src="${f.enquiry.image}" alt="" loading="lazy" /></div>
-      <div class="enq__contact">
-        <a href="mailto:${f.enquiry.email}">${f.enquiry.email}</a>
-        ${f.enquiry.phone ? `<a href="tel:${f.enquiry.phone.replace(/[^+\d]/g, "")}">${f.enquiry.phone}</a>` : ""}
-      </div>
+    (m, i) => `<li class="story__item${i === 0 ? " is-active" : ""}" id="ms-${i}">
+      <span class="story__dot" aria-hidden="true"></span>
+      <p class="story__yr-sm">${m.year}</p>
+      <h3 class="story__h">${m.title}</h3>
+      <ul class="story__pts">${m.points.map((pt) => `<li>${pt}</li>`).join("")}</ul>
+      ${m.tags?.length ? `<ul class="story__tags">${m.tags.map((t) => `<li>${t}</li>`).join("")}</ul>` : ""}
     </li>`
   )
   .join("");
@@ -220,11 +226,11 @@ async function revealMedia(media) {
    Companies
    Desktop: the section pins; scrolling slides each card in over
    the last one, which steps back into a stack. After the last
-   card the enquiries page slides up over the whole section.
+   card the Our Story timeline slides up over the whole section.
    Small screens: a swipeable row.
    ------------------------------------------------------------ */
 const cos = $(".cos");
-const enq = $(".enq");
+const story = $("#story");
 const cards = $$(".card", $("#cosDeck"));
 const medias = cards.map((c) => $(".card__media", c));
 const shades = cards.map((c) => $(".card__shade", c));
@@ -266,8 +272,8 @@ function layoutDeck(pos) {
 const mm = gsap.matchMedia();
 mm.add("(min-width: 901px) and (min-height: 601px)", () => {
   const travel = () => window.innerHeight * 0.85 * (n - 1); // scroll spent moving through the cards
-  const cover = () => cos.offsetHeight;                      // scroll spent while enquiries slide over
-  const setOverlap = () => { enq.style.marginTop = `-${cover()}px`; };
+  const cover = () => cos.offsetHeight;                      // scroll spent while the timeline slides over
+  const setOverlap = () => { story.style.marginTop = `-${cover()}px`; };
   setOverlap();
 
   const st = ScrollTrigger.create({
@@ -312,7 +318,7 @@ mm.add("(min-width: 901px) and (min-height: 601px)", () => {
   prev.disabled = true;
 
   return () => {
-    enq.style.marginTop = "";
+    story.style.marginTop = "";
     gsap.set(cards, { clearProps: "transform,zIndex" });
     gsap.set(".cos__stage", { clearProps: "transform" });
     shades.forEach((s) => (s.style.opacity = 0));
@@ -353,6 +359,59 @@ $$('a[href="#companies"]').forEach((a) =>
     window.scrollTo({ top: cos.getBoundingClientRect().top + window.scrollY + 2, behavior: "smooth" });
   })
 );
+
+/* ------------------------------------------------------------
+   Our story: the section holds while you scroll; the active
+   year grows on the left and its milestone fades in on the right
+   ------------------------------------------------------------ */
+const track = $("#storyTrack");
+const years = $$(".story__year");
+const items = $$(".story__item");
+const bar = $("#storyBar");
+const nYears = milestones.length;
+const lerp = (a, b, t) => a + (b - a) * t;
+let activeYear = 0;
+
+function yearStyle(d) {
+  // as in the reference: 4.5rem active, 2.75rem neighbours, 1.5rem the rest
+  if (d < 1) return { size: lerp(4.5, 2.75, d), op: lerp(1, 0.825, d), x: lerp(1.25, 0.52, d) };
+  if (d < 2) return { size: lerp(2.75, 1.5, d - 1), op: lerp(0.825, 0.7, d - 1), x: lerp(0.52, 0, d - 1) };
+  return { size: 1.5, op: 0.7, x: 0 };
+}
+
+const storyMQ = window.matchMedia("(min-width: 901px) and (prefers-reduced-motion: no-preference)");
+
+function updateStory() {
+  if (!storyMQ.matches) return;
+  const r = track.getBoundingClientRect();
+  const span = track.offsetHeight - window.innerHeight;
+  const prog = Math.min(1, Math.max(0, -r.top / Math.max(1, span)));
+  const pos = prog * (nYears - 1);
+  years.forEach((y, i) => {
+    const st = yearStyle(Math.abs(i - pos));
+    y.style.fontSize = `${st.size}rem`;
+    y.style.opacity = st.op.toFixed(3);
+    y.style.transform = `translateX(${st.x}rem)`;
+  });
+  bar.style.setProperty("--bar", pos.toFixed(4));
+  const idx = Math.round(pos);
+  if (idx !== activeYear) {
+    activeYear = idx;
+    items.forEach((it, i) => it.classList.toggle("is-active", i === idx));
+    years.forEach((y, i) => (i === idx ? y.setAttribute("aria-current", "step") : y.removeAttribute("aria-current")));
+  }
+}
+years.forEach((y) =>
+  y.addEventListener("click", () => {
+    const i = Number(y.dataset.i);
+    const span = track.offsetHeight - window.innerHeight;
+    const top = track.getBoundingClientRect().top + window.scrollY;
+    window.scrollTo({ top: top + span * (i / (nYears - 1)) + 1, behavior: "smooth" });
+  })
+);
+window.addEventListener("scroll", updateStory, { passive: true });
+window.addEventListener("resize", updateStory);
+updateStory();
 
 /* ------------------------------------------------------------
    Small touches

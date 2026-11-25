@@ -26,6 +26,7 @@
             <li><a class="nav__link" href="#about">About</a></li>
             <li><a class="nav__link" href="#clients">Clients</a></li>
             <li><a class="nav__link" href="#companies">Companies</a></li>
+            <li><a class="nav__link" href="#story">Our Story</a></li>
             <li><a class="nav__link" href="#contact">Contact</a></li>
           </ul>
           <span class="nav__ind" aria-hidden="true"></span>
@@ -38,6 +39,7 @@
         <a href="#about">About</a>
         <a href="#clients">Clients</a>
         <a href="#companies">Companies</a>
+        <a href="#story">Our Story</a>
         <a href="#contact">Contact</a>
       </nav>
     </header>
@@ -99,27 +101,41 @@
         </div>
       </section>
 
-      <!-- ================= ENQUIRIES (slides up over the companies) ================= -->
-      <section class="enq" id="contact" data-surface="light" aria-labelledby="enqTitle">
-        <div class="enq__in">
-          <div class="enq__head">
-            <p class="enq__label">Enquiries</p>
-            <div>
-              <h2 class="enq__title" id="enqTitle">Tell us what you need to source.</h2>
-              <p class="enq__lede">Each company in the group runs its own sales team. Write to the one that makes your part and they will reply directly.</p>
+      <!-- ================= OUR STORY (timeline) ================= -->
+      <section class="story" id="story" data-surface="dark" aria-labelledby="storyTitle">
+        <div class="story__track" id="storyTrack">
+          <div class="story__sticky">
+            <div class="story__in">
+              <div class="story__head">
+                <h2 class="story__title" id="storyTitle">Our story</h2>
+                <span class="story__rule" aria-hidden="true"></span>
+              </div>
+              <div class="story__grid">
+                <div class="story__years" id="storyYears" role="toolbar" aria-orientation="vertical" aria-label="Choose a year">
+                  <span class="story__line" aria-hidden="true"></span>
+                  <span class="story__bar" id="storyBar" aria-hidden="true"></span>
+                </div>
+                <ol class="story__list" id="storyList"></ol>
+              </div>
             </div>
           </div>
-          <ul class="enq__grid" id="enqGrid"></ul>
         </div>
       </section>
     </main>
 
     <!-- ================= FOOTER ================= -->
-    <footer class="ftr" data-surface="dark">
+    <footer class="ftr" id="contact" data-surface="dark">
       <div class="ftr__in">
-        <div class="ftr__brand">
-          <img src="/media/img/mark-white.png" alt="" width="40" height="32" />
-          <span>Khandelwal Busar Group</span>
+        <div class="ftr__top">
+          <div class="ftr__brand">
+            <img src="/media/img/mark-white.png" alt="" width="40" height="32" />
+            <span>Khandelwal Busar Group</span>
+          </div>
+          <div class="ftr__cols">
+            <div><p class="ftr__h">Sheet metal &amp; assemblies</p><a href="mailto:business@khandelwalbusar.com">business@khandelwalbusar.com</a></div>
+            <div><p class="ftr__h">Cold rolled &amp; HRPO steel</p><a href="mailto:info@mcilindia.net">info@mcilindia.net</a></div>
+            <div><p class="ftr__h">Galvanised tape &amp; wire</p><a href="mailto:alwar@khandelwalbusar.com">alwar@khandelwalbusar.com</a></div>
+          </div>
         </div>
         <p class="ftr__addr">Plots 112 &amp; 113, Sector 59, HSIIDC Industrial Estate, Faridabad 121004, Haryana · Plot A22, Matsya Industrial Area, Alwar 301001, Rajasthan</p>
         <div class="ftr__bot">
