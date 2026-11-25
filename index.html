@@ -84,48 +84,47 @@
         </div>
       </section>
 
-      <!-- ================= COMPANIES (horizontal) ================= -->
+      <!-- ================= COMPANIES (stacking deck) ================= -->
       <section class="cos" id="companies" data-surface="dark" aria-labelledby="cosTitle">
         <div class="cos__bg" aria-hidden="true"><img src="/media/img/kbi-press-line.jpg" alt="" /></div>
         <div class="cos__pin">
           <h2 class="cos__title" id="cosTitle">Our Companies</h2>
           <div class="cos__stage">
-            <div class="cos__viewport" id="cosViewport">
-              <ul class="cos__track" id="cosTrack"></ul>
-            </div>
+            <ul class="cos__deck" id="cosDeck"></ul>
             <button class="arrow arrow--prev" type="button" aria-label="Previous company"></button>
             <button class="arrow arrow--next" type="button" aria-label="Next company"></button>
           </div>
           <div class="dots" id="cosDots" role="tablist" aria-label="Choose a company"></div>
+          <div class="cos__dim" aria-hidden="true"></div>
+        </div>
+      </section>
+
+      <!-- ================= ENQUIRIES (slides up over the companies) ================= -->
+      <section class="enq" id="contact" data-surface="light" aria-labelledby="enqTitle">
+        <div class="enq__in">
+          <div class="enq__head">
+            <p class="enq__label">Enquiries</p>
+            <div>
+              <h2 class="enq__title" id="enqTitle">Tell us what you need to source.</h2>
+              <p class="enq__lede">Each company in the group runs its own sales team. Write to the one that makes your part and they will reply directly.</p>
+            </div>
+          </div>
+          <ul class="enq__grid" id="enqGrid"></ul>
         </div>
       </section>
     </main>
 
     <!-- ================= FOOTER ================= -->
-    <footer class="ftr" id="contact" data-surface="dark">
+    <footer class="ftr" data-surface="dark">
       <div class="ftr__in">
-        <h2 class="ftr__title">Local expertise for every<br />metal component you source.</h2>
-        <div class="ftr__grid">
-          <div>
-            <p class="ftr__h">Sheet metal &amp; assemblies</p>
-            <a href="mailto:business@khandelwalbusar.com">business@khandelwalbusar.com</a>
-          </div>
-          <div>
-            <p class="ftr__h">Cold rolled &amp; HRPO steel</p>
-            <a href="mailto:info@mcilindia.net">info@mcilindia.net</a>
-          </div>
-          <div>
-            <p class="ftr__h">Galvanised tape &amp; wire</p>
-            <a href="mailto:alwar@khandelwalbusar.com">alwar@khandelwalbusar.com</a>
-          </div>
-          <div>
-            <p class="ftr__h">Head office</p>
-            <p>Plots 112 &amp; 113, Sector 59, HSIIDC, Faridabad 121004</p>
-          </div>
+        <div class="ftr__brand">
+          <img src="/media/img/mark-white.png" alt="" width="40" height="32" />
+          <span>Khandelwal Busar Group</span>
         </div>
+        <p class="ftr__addr">Plots 112 &amp; 113, Sector 59, HSIIDC Industrial Estate, Faridabad 121004, Haryana · Plot A22, Matsya Industrial Area, Alwar 301001, Rajasthan</p>
         <div class="ftr__bot">
           <span>© <span id="year"></span> Khandelwal Busar Group</span>
-          <span>Faridabad · Alwar · India</span>
+          <span>Metal Coatings (India) Ltd · BSE 531810</span>
         </div>
       </div>
     </footer>
