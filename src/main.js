@@ -2,6 +2,8 @@ import "./style.css";
 import { gsap } from "gsap";
 import { ScrollTrigger } from "gsap/ScrollTrigger";
 import { about, firms, clients, milestones } from "./data.js";
+import glyphData from "./glyphs.json";
+import { createGlyphArt } from "./glyphArt.js";
 
 gsap.registerPlugin(ScrollTrigger);
 
@@ -92,10 +94,9 @@ const sectionIds = navLinks.map((a) => a.getAttribute("href").slice(1));
 
 function placeIndicator(link) {
   if (!link) return ind.classList.remove("is-on");
-  const nav = $("#nav").getBoundingClientRect();
-  const r = link.getBoundingClientRect();
-  ind.style.setProperty("--ind-x", `${r.left - nav.left}px`);
-  ind.style.setProperty("--ind-w", `${r.width}px`);
+  // offset* ignores the pill's pop-in scale, so the highlight lands exactly on the link
+  ind.style.setProperty("--ind-x", `${link.offsetLeft}px`);
+  ind.style.setProperty("--ind-w", `${link.offsetWidth}px`);
   ind.classList.add("is-on");
 }
 
@@ -371,6 +372,7 @@ const bar = $("#storyBar");
 const nYears = milestones.length;
 const lerp = (a, b, t) => a + (b - a) * t;
 let activeYear = 0;
+const art = createGlyphArt($("#storyArt"), glyphData, { reduceMotion });
 
 function yearStyle(d) {
   // as in the reference: 4.5rem active, 2.75rem neighbours, 1.5rem the rest
@@ -398,6 +400,7 @@ function updateStory() {
   if (idx !== activeYear) {
     activeYear = idx;
     items.forEach((it, i) => it.classList.toggle("is-active", i === idx));
+    art.setShape(idx);
     years.forEach((y, i) => (i === idx ? y.setAttribute("aria-current", "step") : y.removeAttribute("aria-current")));
   }
 }
