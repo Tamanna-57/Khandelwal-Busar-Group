@@ -1,7 +1,7 @@
 import "./style.css";
 import { gsap } from "gsap";
 import { ScrollTrigger } from "gsap/ScrollTrigger";
-import { group, firms, chain, capabilities, leaders, clients, certs, sites } from "./data.js";
+import { about, firms, clients } from "./data.js";
 
 gsap.registerPlugin(ScrollTrigger);
 
@@ -10,94 +10,111 @@ const $$ = (s, r = document) => [...r.querySelectorAll(s)];
 const reduceMotion = window.matchMedia("(prefers-reduced-motion: reduce)").matches;
 
 /* ------------------------------------------------------------
-   Render content
+   Content
    ------------------------------------------------------------ */
 $("#year").textContent = new Date().getFullYear();
 
-$("#heroCos").innerHTML = firms
-  .map((f) => `<li><a href="#co-${f.id}" data-co="${f.id}"><b>${f.name}</b><span>${f.kicker} · ${f.location.split(",")[0]}</span></a></li>`)
-  .join("");
+$("#aboutTitle").textContent = about.title;
+$("#aboutBody").innerHTML = about.body.map((p) => `<p>${p}</p>`).join("");
+$("#aboutSinceLbl").textContent = about.sinceLabel;
+$("#aboutSince").textContent = about.since;
+$("#aboutImg").src = about.image;
+$("#aboutImg").alt = about.imageAlt;
 
-$("#chain").innerHTML = chain
+const logoItems = clients.map(([n, src]) => `<li><img src="${src}" alt="${n}" loading="lazy" /></li>`).join("");
+// Two copies make the loop seamless; the second copy is hidden from screen readers.
+$("#logos").innerHTML = reduceMotion
+  ? logoItems
+  : logoItems + logoItems.replaceAll("<li>", '<li aria-hidden="true">').replaceAll('alt="', 'alt="" data-alt="');
+
+$("#cosTrack").innerHTML = firms
   .map(
-    (c, i) => `<li class="chain__step${i > 0 && i < chain.length - 1 ? " is-group" : ""}">
-      <span class="chain__n">${String(i + 1).padStart(2, "0")}</span>
-      <p class="chain__t">${c.step}</p>
-      <p class="chain__d">${c.detail}</p>
-      <p class="chain__w">${c.who}</p>
+    (f, i) => `<li class="card${f.dark ? " card--dark" : ""}${i === 0 ? " is-current" : ""}" id="co-${f.id}">
+      <div class="card__body">
+        <div class="card__logo"><img src="${f.dark ? f.logoDark : f.logo}" alt="" /><span>${f.category.split(" · ")[0]}</span></div>
+        <h3 class="card__name">${f.name}</h3>
+        <p class="card__meta">${f.meta}</p>
+        <div class="card__text">
+          ${f.description.map((p) => `<p>${p}</p>`).join("")}
+          <dl class="card__facts">${f.facts.map(([k, v]) => `<div><dt>${k}</dt><dd>${v}</dd></div>`).join("")}</dl>
+        </div>
+        <div class="card__foot">
+          <p class="card__cat">${f.category}</p>
+          <a class="card__btn" href="${f.url}" target="_blank" rel="noopener">Visit website</a>
+        </div>
+      </div>
+      <div class="card__media"><img src="${f.image}" alt="${f.alt}" loading="lazy" /></div>
     </li>`
   )
   .join("");
 
-$("#cosTrack").innerHTML = firms
-  .map(
-    (f) => `<article class="co" id="co-${f.id}">
-      <div class="co__media"><img src="${f.image}" alt="${f.alt}" loading="lazy" /></div>
-      <div class="co__text">
-        <p class="co__kicker"><span>${f.kicker}</span><span>${f.since}</span></p>
-        <h3 class="co__name">${f.name}</h3>
-        <p class="co__loc">${f.location}</p>
-        <p class="co__blurb">${f.blurb}</p>
-        <dl class="co__specs">${f.specs.map(([k, v]) => `<div class="co__spec"><dt>${k}</dt><dd>${v}</dd></div>`).join("")}</dl>
-        <a class="btn btn--blue co__link" href="${f.url}" target="_blank" rel="noopener">Visit ${f.linkLabel} ↗</a>
-      </div>
-    </article>`
-  )
-  .join("");
-
-$("#capsGrid").innerHTML = capabilities
-  .map(
-    (c) => `<article class="cap">
-      <div class="cap__img"><img src="${c.image}" alt="${c.title} at ${c.firm}" loading="lazy" /></div>
-      <div class="cap__meta"><h3 class="cap__t">${c.title}</h3><span class="cap__f">${c.firm}</span></div>
-      <p class="cap__p">${c.text}</p>
-    </article>`
-  )
-  .join("");
-
-$("#stats").innerHTML = group.stats
-  .map((s) => `<div class="stat"><dt>${s.label}</dt><dd>${s.value}${s.unit ? `<small>${s.unit}</small>` : ""}</dd></div>`)
-  .join("");
-
-$("#logos").innerHTML = clients.map(([n, src]) => `<li><img src="${src}" alt="${n}" loading="lazy" /></li>`).join("");
-
-$("#certs").innerHTML = certs.map(([c, d]) => `<li><b>${c}</b><span>${d}</span></li>`).join("");
-
-$("#leaders").innerHTML = leaders
-  .map(
-    (p) => `<figure class="person">
-      <div class="person__img"><img src="${p.image}" alt="${p.name}" loading="lazy" /></div>
-      <figcaption>
-        <p class="person__n">${p.name}</p>
-        <p class="person__r">${p.role}</p>
-        ${p.note ? `<p class="person__p">${p.note}</p>` : ""}
-      </figcaption>
-    </figure>`
-  )
-  .join("");
-
-$("#sites").innerHTML = sites
-  .map(
-    (s) => `<article class="site">
-      <div class="site__img"><img src="${s.image}" alt="${s.label}" loading="lazy" /></div>
-      <div class="site__body">
-        <p class="site__lbl">${s.label}</p>
-        <h3 class="site__city">${s.city}</h3>
-        <p class="site__addr">${s.address}</p>
-        <p class="site__ct">${s.contact}</p>
-      </div>
-    </article>`
-  )
+$("#cosDots").innerHTML = firms
+  .map((f, i) => `<button type="button" role="tab" aria-label="${f.name}" aria-selected="${i === 0}" data-i="${i}"></button>`)
   .join("");
 
 /* ------------------------------------------------------------
-   Header, mobile menu, active link
+   Header: transparent over the hero, pill nav afterwards,
+   logo colour follows the section underneath
    ------------------------------------------------------------ */
 const hdr = $("#hdr");
-const onScroll = () => hdr.classList.toggle("is-scrolled", window.scrollY > 8);
-onScroll();
-window.addEventListener("scroll", onScroll, { passive: true });
+const hero = $(".hero");
+const surfaces = $$("[data-surface]").filter((el) => el !== hdr);
+const navLinks = $$(".nav__link");
+const ind = $(".nav__ind");
+const sectionIds = navLinks.map((a) => a.getAttribute("href").slice(1));
 
+function placeIndicator(link) {
+  if (!link) return ind.classList.remove("is-on");
+  const nav = $("#nav").getBoundingClientRect();
+  const r = link.getBoundingClientRect();
+  ind.style.setProperty("--ind-x", `${r.left - nav.left - 0}px`);
+  ind.style.setProperty("--ind-w", `${r.width}px`);
+  ind.classList.add("is-on");
+}
+
+let inContent = false;
+let activeId = null;
+function updateHeader() {
+  const probe = hdr.offsetHeight / 2;
+
+  // pill appears once the hero has scrolled away
+  const nowContent = hero.getBoundingClientRect().bottom <= hdr.offsetHeight;
+  if (nowContent !== inContent) {
+    inContent = nowContent;
+    hdr.classList.toggle("is-content", inContent);
+    if (inContent && !reduceMotion) {
+      hdr.classList.remove("is-popping");
+      void hdr.offsetWidth;
+      hdr.classList.add("is-popping");
+    }
+  }
+
+  // which surface sits under the header
+  const under = surfaces.find((el) => {
+    const r = el.getBoundingClientRect();
+    return r.top <= probe && r.bottom > probe;
+  });
+  hdr.dataset.surface = under?.dataset.surface || "dark";
+
+  // which nav section is active
+  let id = null;
+  for (const sid of sectionIds) {
+    const el = document.getElementById(sid);
+    if (el && el.getBoundingClientRect().top <= window.innerHeight * 0.45) id = sid;
+  }
+  if (!inContent) id = null;
+  if (id !== activeId) {
+    activeId = id;
+    navLinks.forEach((a) => a.classList.toggle("is-active", a.getAttribute("href") === "#" + id));
+    placeIndicator(navLinks.find((a) => a.getAttribute("href") === "#" + id));
+  }
+}
+hdr.addEventListener("animationend", () => hdr.classList.remove("is-popping"));
+window.addEventListener("scroll", updateHeader, { passive: true });
+window.addEventListener("resize", () => { activeId = undefined; updateHeader(); });
+updateHeader();
+
+// mobile menu
 const menuBtn = $(".hdr__menu");
 const drawer = $("#drawer");
 const setDrawer = (open) => {
@@ -109,89 +126,92 @@ menuBtn.addEventListener("click", () => setDrawer(drawer.hidden));
 $$("#drawer a").forEach((a) => a.addEventListener("click", () => setDrawer(false)));
 window.addEventListener("keydown", (e) => e.key === "Escape" && setDrawer(false));
 
-const navLinks = $$(".hdr__nav a");
-const navIO = new IntersectionObserver(
-  (entries) =>
-    entries.forEach((e) => {
-      if (e.isIntersecting) navLinks.forEach((a) => a.classList.toggle("is-active", a.getAttribute("href") === "#" + e.target.id));
-    }),
-  { rootMargin: "-45% 0px -50% 0px" }
-);
-["companies", "capabilities", "customers", "leadership", "locations"].forEach((id) => navIO.observe(document.getElementById(id)));
-
 /* ------------------------------------------------------------
-   Hero video
+   Companies: horizontal scroll
+   Desktop: the section pins and vertical scroll slides the cards.
+   Small screens: a swipeable row with scroll-snap.
    ------------------------------------------------------------ */
-const video = $(".hero__video");
-const pauseBtn = $(".hero__pause");
-const setPaused = (paused) => {
-  paused ? video.pause() : video.play().catch(() => {});
-  pauseBtn.setAttribute("aria-pressed", String(paused));
-  pauseBtn.setAttribute("aria-label", paused ? "Play background video" : "Pause background video");
-};
-if (reduceMotion) setPaused(true);
-pauseBtn.addEventListener("click", () => setPaused(!video.paused));
-
-/* ------------------------------------------------------------
-   Motion: one load moment + the company sequence
-   ------------------------------------------------------------ */
-if (!reduceMotion) {
-  gsap.from(".slab", { yPercent: 12, duration: 1.1, ease: "power3.out" });
-  gsap.from(".slab__in > *", { y: 18, opacity: 0, duration: 0.9, ease: "power3.out", stagger: 0.08, delay: 0.2 });
-}
-
-const cos = $(".cos");
 const track = $("#cosTrack");
-const bar = $("#cosBar");
-const now = $("#cosNow");
+const viewport = $("#cosViewport");
+const cards = $$(".card", track);
+const dots = $$("#cosDots button");
+const prev = $(".arrow--prev");
+const next = $(".arrow--next");
+const n = cards.length;
+let current = 0;
+let goTo = () => {};
+
+function setCurrent(i) {
+  if (i === current) return;
+  current = i;
+  cards.forEach((c, k) => c.classList.toggle("is-current", k === i));
+  dots.forEach((d, k) => d.setAttribute("aria-selected", String(k === i)));
+  prev.disabled = i === 0;
+  next.disabled = i === n - 1;
+}
+prev.disabled = true;
+
 const mm = gsap.matchMedia();
-
-mm.add("(min-width: 1024px) and (min-height: 680px) and (prefers-reduced-motion: no-preference)", () => {
-  cos.classList.remove("is-stacked");
-  const panels = $$(".co", track);
-  const n = panels.length;
-  const dist = () => track.scrollWidth - window.innerWidth;
-
+mm.add("(min-width: 901px) and (min-height: 601px)", () => {
+  const step = () => cards[0].offsetWidth + parseFloat(getComputedStyle(track).columnGap || 28);
   const tween = gsap.to(track, {
-    x: () => -dist(),
+    x: () => -step() * (n - 1),
     ease: "none",
     scrollTrigger: {
-      trigger: ".cos__pin",
-      start: () => `top ${hdr.offsetHeight + 24}px`,
-      end: () => "+=" + dist(),
+      trigger: ".cos",
+      start: "top top",
+      end: () => "+=" + step() * (n - 1),
       pin: true,
-      scrub: 0.6,
+      scrub: reduceMotion ? true : 0.7,
+      snap: { snapTo: 1 / (n - 1), duration: { min: 0.2, max: 0.5 }, delay: 0.08, ease: "power2.inOut" },
       invalidateOnRefresh: true,
-      anticipatePin: 1,
-      onUpdate: (self) => {
-        bar.style.transform = `translateX(${self.progress * (n - 1) * 100}%)`;
-        now.textContent = String(Math.round(self.progress * (n - 1)) + 1);
-      },
+      onUpdate: (self) => setCurrent(Math.round(self.progress * (n - 1))),
     },
   });
-
-  panels.forEach((p) => {
-    gsap.fromTo($(".co__media img", p), { scale: 1.12, xPercent: -4 }, {
-      scale: 1.12, xPercent: 4, ease: "none",
-      scrollTrigger: { trigger: p, containerAnimation: tween, start: "left right", end: "right left", scrub: true },
-    });
-  });
-
-  const jump = (e) => {
-    const i = firms.findIndex((f) => f.id === e.currentTarget.dataset.co);
+  goTo = (i) => {
     const st = tween.scrollTrigger;
-    e.preventDefault();
-    window.scrollTo({ top: st.start + (st.end - st.start) * (i / (n - 1)) + 2, behavior: "smooth" });
+    window.scrollTo({ top: st.start + (st.end - st.start) * (i / (n - 1)), behavior: reduceMotion ? "auto" : "smooth" });
   };
-  const links = $$("#heroCos a");
-  links.forEach((a) => a.addEventListener("click", jump));
-  return () => {
-    links.forEach((a) => a.removeEventListener("click", jump));
-    cos.classList.add("is-stacked");
-  };
+  return () => { gsap.set(track, { x: 0 }); goTo = () => {}; };
 });
-mm.add("(max-width: 1023px), (max-height: 679px), (prefers-reduced-motion: reduce)", () => {
-  cos.classList.add("is-stacked");
+mm.add("(max-width: 900px), (max-height: 600px)", () => {
+  const onScroll = () => {
+    const mid = viewport.scrollLeft + viewport.clientWidth / 2;
+    let best = 0, dist = Infinity;
+    cards.forEach((c, k) => {
+      const d = Math.abs(c.offsetLeft + c.offsetWidth / 2 - mid);
+      if (d < dist) { dist = d; best = k; }
+    });
+    setCurrent(best);
+  };
+  viewport.addEventListener("scroll", onScroll, { passive: true });
+  goTo = (i) => viewport.scrollTo({ left: cards[i].offsetLeft - (viewport.clientWidth - cards[i].offsetWidth) / 2, behavior: "smooth" });
+  return () => viewport.removeEventListener("scroll", onScroll);
 });
 
-window.addEventListener("load", () => ScrollTrigger.refresh());
+prev.addEventListener("click", () => goTo(Math.max(0, current - 1)));
+next.addEventListener("click", () => goTo(Math.min(n - 1, current + 1)));
+dots.forEach((d) => d.addEventListener("click", () => goTo(Number(d.dataset.i))));
+
+/* nav links into the pinned section land on its first card */
+$$('a[href="#companies"]').forEach((a) =>
+  a.addEventListener("click", (e) => {
+    e.preventDefault();
+    window.scrollTo({ top: $("#companies").getBoundingClientRect().top + window.scrollY + 2, behavior: "smooth" });
+  })
+);
+
+/* ------------------------------------------------------------
+   Small touches
+   ------------------------------------------------------------ */
+if (!reduceMotion) {
+  // about photo drifts slightly as the section passes
+  gsap.fromTo("#aboutImg", { yPercent: -4, scale: 1.08 }, {
+    yPercent: 4, scale: 1.08, ease: "none",
+    scrollTrigger: { trigger: ".about", start: "top bottom", end: "bottom top", scrub: true },
+  });
+} else {
+  $(".hero__video").pause();
+}
+
+window.addEventListener("load", () => { ScrollTrigger.refresh(); updateHeader(); });
