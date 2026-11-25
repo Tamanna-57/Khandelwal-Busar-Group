@@ -52,7 +52,7 @@ export const firms = [
     image: M + "alwar-galvanizing.jpg",
     alt: "Galvanising line producing steel wire and strip",
     url: "https://khandelwalbusar.com/products?cat=wires",
-    linkLabel: "Cable products",
+    linkLabel: "KBI cable products",
   },
   {
     id: "mcil",
@@ -74,6 +74,15 @@ export const firms = [
     url: "https://www.mcil.net",
     linkLabel: "mcil.net",
   },
+];
+
+// How metal moves through the group, in order.
+export const chain = [
+  { step: "Hot rolled coil", detail: "1.8–6.0 mm input, up to 30 MT", who: "Sourced to spec" },
+  { step: "Pickling & cold rolling", detail: "Reduced to gauge, ±0.01 mm", who: "MCIL · Faridabad" },
+  { step: "Galvanising & slitting", detail: "Zinc-coated tape, wire and strip", who: "KB Wires & Strips · Alwar" },
+  { step: "Pressing, welding, machining", detail: "Axles, chassis, cabins, brackets", who: "KBI · Faridabad" },
+  { step: "OEM lines", detail: "Automotive, power and telecom", who: "30+ customers" },
 ];
 
 export const capabilities = [
