@@ -195,7 +195,8 @@ mm.add("(prefers-reduced-motion: no-preference)", () => {
       const to = vw / 2 - f.c;
       if (i > 0) push({ type: "h", from: x, to, len: Math.abs(to - x) * 0.75 + 1 });
       x = to;
-      push({ type: "hold", len: vh * 0.35 });
+      // the last company holds longer so it is fully read before Our Story slides over it
+      push({ type: "hold", len: vh * (i === cosFirms.length - 1 ? 0.9 : 0.35) });
     });
     plan = { segs, total: at };
   }
@@ -309,60 +310,6 @@ years.forEach((y) =>
 window.addEventListener("scroll", updateStory, { passive: true });
 window.addEventListener("resize", updateStory);
 updateStory();
-
-/* ------------------------------------------------------------
-   Footer: KBG fitted edge to edge, with a dark spotlight that
-   follows the mouse across the letters (after citadelgroup.org)
-   ------------------------------------------------------------ */
-const ftr = $(".ftr");
-const kbg = $("#kbgWord");
-const kbgFill = $("#kbgFill");
-const kbgSpot = $("#kbgSpot");
-const kbgSpotLayer = $("#kbgSpotLayer");
-
-// Crop the viewBox to the letters' ink so they run from edge to edge.
-function fitKbg() {
-  const ctx = document.createElement("canvas").getContext("2d");
-  ctx.font = '800 1000px "Montserrat"';
-  const m = ctx.measureText("KBG");
-  const l = -m.actualBoundingBoxLeft, r = m.actualBoundingBoxRight;
-  const t = -m.actualBoundingBoxAscent, b = m.actualBoundingBoxDescent;
-  if (!(r - l > 0 && b - t > 0)) return;
-  kbg.setAttribute("viewBox", `${l.toFixed(1)} ${t.toFixed(1)} ${(r - l).toFixed(1)} ${(b - t).toFixed(1)}`);
-  kbgFill.setAttribute("y1", t.toFixed(1));
-  kbgFill.setAttribute("y2", b.toFixed(1));
-  kbgSpot.setAttribute("r", ((r - l) * 0.2).toFixed(1));
-}
-fitKbg();
-(document.fonts ? document.fonts.load('800 1000px "Montserrat"') : Promise.resolve()).catch(() => {}).then(fitKbg);
-
-let spot = { x: 0, y: 0, a: 0 };
-let aim = { x: 0, y: 0, a: 0 };
-let spotRaf = 0;
-function moveSpot() {
-  const k = reduceMotion ? 1 : 0.12;
-  spot.x += (aim.x - spot.x) * k;
-  spot.y += (aim.y - spot.y) * k;
-  spot.a += (aim.a - spot.a) * (reduceMotion ? 1 : 0.1);
-  kbgSpot.setAttribute("cx", spot.x.toFixed(1));
-  kbgSpot.setAttribute("cy", spot.y.toFixed(1));
-  kbgSpotLayer.setAttribute("opacity", spot.a.toFixed(3));
-  const busy = Math.abs(aim.x - spot.x) + Math.abs(aim.y - spot.y) > 0.5 || Math.abs(aim.a - spot.a) > 0.005;
-  spotRaf = busy ? requestAnimationFrame(moveSpot) : 0;
-}
-ftr.addEventListener("pointermove", (e) => {
-  if (e.pointerType !== "mouse") return;
-  const ctm = kbg.getScreenCTM();
-  if (!ctm) return;
-  const p = new DOMPoint(e.clientX, e.clientY).matrixTransform(ctm.inverse());
-  aim = { x: p.x, y: p.y, a: 1 };
-  if (spot.a < 0.02) spot = { x: p.x, y: p.y, a: spot.a }; // appear where the mouse is
-  if (!spotRaf) spotRaf = requestAnimationFrame(moveSpot);
-});
-ftr.addEventListener("pointerleave", () => {
-  aim.a = 0;
-  if (!spotRaf) spotRaf = requestAnimationFrame(moveSpot);
-});
 
 /* ------------------------------------------------------------
    Small touches
