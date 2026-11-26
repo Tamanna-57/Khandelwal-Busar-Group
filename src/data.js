@@ -176,7 +176,8 @@ export const heroMetrics = [
 ];
 
 // Leadership: Board of Directors and Key Managerial Personnel of Metal Coatings (India) Ltd,
-// names, designations, profiles and photos from the MCIL website (github.com/Tamanna-57/Mcil-website).
+// names, designations and profiles from the MCIL website repo (github.com/Tamanna-57/Mcil-website);
+// portraits are the current professional photos published on mcil.net/images/team.
 export const leaders = [
   {
     "id": "ramesh-chander-khandelwal",
@@ -185,7 +186,7 @@ export const leaders = [
     "chip": "Promoter · Executive",
     "bio": "Mr. Ramesh Chander Khandelwal is the Chairman and Whole-time Director of the Company. Being in the capacity of Chairman, he chairs the Board of Directors and provides strategic guidance to steer the Company's overall growth and governance.\n\nAs Whole-time Director, he closely oversees the manufacturing function and contributes towards key technical aspects of operations. A Mechanical Engineer by qualification, his technical expertise in C.R. manufacturing and galvanising has helped the Company achieve substantial improvement in efficiencies.",
     "qualification": "BE (Mechanical Engineering)",
-    "image": "/media/img/lead-ramesh.jpg",
+    "image": "/media/team/ramesh-chander-khandelwal.jpg",
     "company": "Metal Coatings (India) Ltd",
     "first": "Ramesh"
   },
@@ -196,7 +197,7 @@ export const leaders = [
     "chip": "Promoter · Executive",
     "bio": "Mr. Pramod Khandelwal is the Managing Director of the Company. A Chartered Accountant by qualification, he has an extensive experience in overseeing the Commercial, Financial and Marketing functions of the Company. As Managing Director, he is responsible for the Company's overall management and strategic direction, steering its day-to-day affairs in line with the Board's vision.\n\nHis rich experience and in-depth knowledge of the auto components and consumer durables markets, coupled with his ability to control and manage all financials, commercial and marketing aspects of the Company have played a pivotal role in the Company's proactive strategic decision-making and its ability to stay ahead of the competition.",
     "qualification": "B.Com (Hons.), FCA",
-    "image": "/media/img/lead-pramod.jpg",
+    "image": "/media/team/pramod-khandelwal.jpg",
     "company": "Metal Coatings (India) Ltd",
     "first": "Pramod"
   },
