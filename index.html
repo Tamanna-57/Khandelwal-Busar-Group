@@ -113,17 +113,20 @@
         </div>
       </section>
 
-      <!-- ================= COMPANIES (stacking deck) ================= -->
+      <!-- ================= COMPANIES (full-screen horizontal scroll: wordmark, then each website) ================= -->
       <section class="cos" id="companies" data-surface="dark" aria-labelledby="cosTitle">
-        <div class="cos__bg" aria-hidden="true"><img src="/media/img/kbi-press-line.jpg" alt="" /></div>
         <div class="cos__pin">
-          <h2 class="cos__title" id="cosTitle">Our Companies</h2>
           <div class="cos__stage">
-            <ul class="cos__deck" id="cosDeck"></ul>
-            <button class="arrow arrow--prev" type="button" aria-label="Previous company"></button>
-            <button class="arrow arrow--next" type="button" aria-label="Next company"></button>
+            <div class="cos__track" id="cosTrack">
+              <div class="cos__intro">
+                <p class="cos__eyebrow">Khandelwal Busar Group</p>
+                <h2 class="cos__title" id="cosTitle">Our<br />Companies</h2>
+                <p class="cos__lede">Three manufacturers, one family. Keep scrolling to meet each company and take a look around its website.</p>
+                <p class="cos__hint" aria-hidden="true"><span>Scroll</span><i></i></p>
+              </div>
+            </div>
           </div>
-          <div class="dots" id="cosDots" role="tablist" aria-label="Choose a company"></div>
+          <span class="cos__progress" aria-hidden="true"><i id="cosProgress"></i></span>
           <div class="cos__dim" aria-hidden="true"></div>
         </div>
       </section>

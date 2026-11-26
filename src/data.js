@@ -2,6 +2,7 @@
 // both companies belong to the Khandelwal Busar Group.
 
 const M = "/media/img/";
+const S = "/media/sites/"; // captures of each company's own website, shown full screen
 
 export const about = {
   title: "Supplying India's leading manufacturers",
@@ -20,7 +21,10 @@ export const firms = [
   {
     id: "kbi",
     name: "Khandelwal Busar Industries",
-    logo: M + "mark-blue.png",
+    mark: "KBI",
+    accent: "#4b86f2",
+    logo: M + "mark-white.png",
+    tagline: "Sheet-metal and fabricated assemblies (axles, chassis, cabins and pedals) for India's automobile, tractor, construction-equipment and defence OEMs.",
     meta: "Faridabad, Haryana · Est. 1981",
     description: [
       "KBI began in 1981 as a Faridabad press shop supplying Maruti Suzuki. Four decades on, it manufactures sheet-metal and fabricated components for India's automobile, tractor, construction-equipment and defence OEMs.",
@@ -36,11 +40,34 @@ export const firms = [
     image: M + "kbi-shop-floor.jpg",
     alt: "KBI press and fabrication shop floor in Faridabad",
     url: "https://khandelwalbusar.com",
+    // Each page is captured twice, without the site's own header: d at a 1440px-wide
+    // desktop window, m at a 390px-wide phone. h = captured height and scroll = how far
+    // the panel scrolls down it, both in CSS px of that window.
+    site: {
+      host: "khandelwalbusar.com",
+      bg: "#1a2d50",
+      pages: [
+        {
+          label: "Home", path: "/",
+          d: { img: S + "kbi-home.webp", h: 2670, scroll: 1220 },
+          m: { img: S + "kbi-home-m.webp", h: 2620, scroll: 1620 },
+        },
+        {
+          label: "Processes", path: "/processes",
+          d: { img: S + "kbi-processes.webp", h: 3510, scroll: 2060, video: { x: -86.4, y: -54, w: 1612.8, h: 1008 } },
+          m: { img: S + "kbi-processes-m.webp", h: 3650, scroll: 2650, video: { x: -23.4, y: -50.6, w: 436.8, h: 945.3 } },
+          video: { src: "/media/video/kbi-processes.mp4", poster: S + "kbi-processes-poster.jpg" },
+        },
+      ],
+    },
   },
   {
     id: "mcil",
     name: "Metal Coatings (India) Ltd",
-    logo: M + "mcil-mark-dark.png",
+    mark: "MCIL",
+    accent: "#d6a54f",
+    logo: M + "mcil-mark-white.png",
+    tagline: "Cold rolled steel strips and coils, and HRPO coils, pickled, rolled and finished on one floor in Faridabad to ±0.01 mm.",
     meta: "Faridabad, Haryana · Est. 1994 · BSE 531810",
     description: [
       "Metal Coatings (India) Limited is a public limited company promoted by the Khandelwal family in December 1994 and listed on the BSE. It manufactures cold rolled steel strips and coils, and hot rolled pickled and oiled (HRPO) coils, at its integrated works in Sector 59, Faridabad.",
@@ -56,11 +83,30 @@ export const firms = [
     image: M + "mcil-coil-line.jpg",
     alt: "Cold rolled steel coils at the MCIL works",
     url: "https://www.mcil.net",
+    site: {
+      host: "mcil.net",
+      bg: "#f5f6f8",
+      pages: [
+        {
+          label: "Home", path: "/",
+          d: { img: S + "mcil-home.webp", h: 3471, scroll: 2021 },
+          m: { img: S + "mcil-home-m.webp", h: 3540, scroll: 2540 },
+        },
+        {
+          label: "Products", path: "/products",
+          d: { img: S + "mcil-products.webp", h: 2150, scroll: 700 },
+          m: { img: S + "mcil-products-m.webp", h: 1780, scroll: 780 },
+        },
+      ],
+    },
   },
   {
     id: "alwar",
     name: "KB Wires & Strips",
-    logo: M + "mark-blue.png",
+    mark: "KB Wires",
+    accent: "#8fc1d4",
+    logo: M + "mark-white.png",
+    tagline: "Galvanised steel tape, round wire and strip that armour the underground power and telecom cables of India's leading cable makers.",
     meta: "Alwar, Rajasthan · Cable input division",
     description: [
       "The group's Alwar plant in Matsya Industrial Area produces galvanised steel tape, wire and strip that armour underground power and telecom cables across India's infrastructure.",
@@ -76,6 +122,23 @@ export const firms = [
     image: M + "alwar-galvanizing.jpg",
     alt: "Galvanising line for steel wire and strip",
     url: "https://khandelwalbusar.com/products?cat=wires",
+    // no site of its own yet: the Alwar plant and cable accessories pages on khandelwalbusar.com
+    site: {
+      host: "khandelwalbusar.com",
+      bg: "#1a2d50",
+      pages: [
+        {
+          label: "Alwar plant", path: "/about_us",
+          d: { img: S + "kbws-about.webp", h: 2850, scroll: 1400 },
+          m: { img: S + "kbws-about-m.webp", h: 2760, scroll: 1760 },
+        },
+        {
+          label: "Cable accessories", path: "/products?cat=wires",
+          d: { img: S + "kbws-products.webp", h: 1879, scroll: 450 },
+          m: { img: S + "kbws-products-m.webp", h: 1560, scroll: 560 },
+        },
+      ],
+    },
   },
 ];
 
