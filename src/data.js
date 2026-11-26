@@ -2,7 +2,7 @@
 // both companies belong to the Khandelwal Busar Group.
 
 const M = "/media/img/";
-const S = "/media/sites/"; // captures of each company's own website, shown in the browser frames
+const S = "/media/sites/"; // captures of each company's own website, shown full screen
 
 export const about = {
   title: "Supplying India's leading manufacturers",
@@ -40,16 +40,23 @@ export const firms = [
     image: M + "kbi-shop-floor.jpg",
     alt: "KBI press and fabrication shop floor in Faridabad",
     url: "https://khandelwalbusar.com",
-    // h = page height captured (CSS px at a 1440px-wide window); scroll = how far the frame scrolls down it
+    // Each page is captured twice, without the site's own header: d at a 1440px-wide
+    // desktop window, m at a 390px-wide phone. h = captured height and scroll = how far
+    // the panel scrolls down it, both in CSS px of that window.
     site: {
       host: "khandelwalbusar.com",
       bg: "#1a2d50",
-      header: { src: S + "kbi-header.webp", h: 77 },
       pages: [
-        { label: "Home", path: "/", img: S + "kbi-home.webp", h: 2250, scroll: 1350 },
         {
-          label: "Processes", path: "/processes", img: S + "kbi-processes.webp", h: 3050, scroll: 2150,
-          video: { src: "/media/video/kbi-processes.mp4", poster: S + "kbi-processes-poster.jpg", top: 0, h: 900, zoom: 1.12 },
+          label: "Home", path: "/",
+          d: { img: S + "kbi-home.webp", h: 2670, scroll: 1220 },
+          m: { img: S + "kbi-home-m.webp", h: 2620, scroll: 1620 },
+        },
+        {
+          label: "Processes", path: "/processes",
+          d: { img: S + "kbi-processes.webp", h: 3510, scroll: 2060, video: { x: -86.4, y: -54, w: 1612.8, h: 1008 } },
+          m: { img: S + "kbi-processes-m.webp", h: 3650, scroll: 2650, video: { x: -23.4, y: -50.6, w: 436.8, h: 945.3 } },
+          video: { src: "/media/video/kbi-processes.mp4", poster: S + "kbi-processes-poster.jpg" },
         },
       ],
     },
@@ -79,10 +86,17 @@ export const firms = [
     site: {
       host: "mcil.net",
       bg: "#f5f6f8",
-      header: { src: S + "mcil-header.webp", h: 50, always: true },
       pages: [
-        { label: "Home", path: "/", img: S + "mcil-home.webp", h: 2960, scroll: 2060 },
-        { label: "Products", path: "/products", img: S + "mcil-products.webp", h: 1900, scroll: 640 },
+        {
+          label: "Home", path: "/",
+          d: { img: S + "mcil-home.webp", h: 3471, scroll: 2021 },
+          m: { img: S + "mcil-home-m.webp", h: 3540, scroll: 2540 },
+        },
+        {
+          label: "Products", path: "/products",
+          d: { img: S + "mcil-products.webp", h: 2150, scroll: 700 },
+          m: { img: S + "mcil-products-m.webp", h: 1780, scroll: 780 },
+        },
       ],
     },
   },
@@ -112,10 +126,17 @@ export const firms = [
     site: {
       host: "khandelwalbusar.com",
       bg: "#1a2d50",
-      header: { src: S + "kbi-header.webp", h: 77 },
       pages: [
-        { label: "Alwar plant", path: "/about_us", img: S + "kbws-about.webp", h: 2300, scroll: 1400 },
-        { label: "Cable accessories", path: "/products?cat=wires", img: S + "kbws-products.webp", h: 1350, scroll: 450 },
+        {
+          label: "Alwar plant", path: "/about_us",
+          d: { img: S + "kbws-about.webp", h: 2850, scroll: 1400 },
+          m: { img: S + "kbws-about-m.webp", h: 2760, scroll: 1760 },
+        },
+        {
+          label: "Cable accessories", path: "/products?cat=wires",
+          d: { img: S + "kbws-products.webp", h: 1879, scroll: 450 },
+          m: { img: S + "kbws-products-m.webp", h: 1560, scroll: 560 },
+        },
       ],
     },
   },
