@@ -2,6 +2,7 @@
 // both companies belong to the Khandelwal Busar Group.
 
 const M = "/media/img/";
+const S = "/media/sites/"; // captures of each company's own website, shown in the browser frames
 
 export const about = {
   title: "Supplying India's leading manufacturers",
@@ -20,7 +21,10 @@ export const firms = [
   {
     id: "kbi",
     name: "Khandelwal Busar Industries",
-    logo: M + "mark-blue.png",
+    mark: "KBI",
+    accent: "#4b86f2",
+    logo: M + "mark-white.png",
+    tagline: "Sheet-metal and fabricated assemblies (axles, chassis, cabins and pedals) for India's automobile, tractor, construction-equipment and defence OEMs.",
     meta: "Faridabad, Haryana · Est. 1981",
     description: [
       "KBI began in 1981 as a Faridabad press shop supplying Maruti Suzuki. Four decades on, it manufactures sheet-metal and fabricated components for India's automobile, tractor, construction-equipment and defence OEMs.",
@@ -36,11 +40,27 @@ export const firms = [
     image: M + "kbi-shop-floor.jpg",
     alt: "KBI press and fabrication shop floor in Faridabad",
     url: "https://khandelwalbusar.com",
+    // h = page height captured (CSS px at a 1440px-wide window); scroll = how far the frame scrolls down it
+    site: {
+      host: "khandelwalbusar.com",
+      bg: "#1a2d50",
+      header: { src: S + "kbi-header.webp", h: 77 },
+      pages: [
+        { label: "Home", path: "/", img: S + "kbi-home.webp", h: 2250, scroll: 1350 },
+        {
+          label: "Processes", path: "/processes", img: S + "kbi-processes.webp", h: 3050, scroll: 2150,
+          video: { src: "/media/video/kbi-processes.mp4", poster: S + "kbi-processes-poster.jpg", top: 0, h: 900, zoom: 1.12 },
+        },
+      ],
+    },
   },
   {
     id: "mcil",
     name: "Metal Coatings (India) Ltd",
-    logo: M + "mcil-mark-dark.png",
+    mark: "MCIL",
+    accent: "#d6a54f",
+    logo: M + "mcil-mark-white.png",
+    tagline: "Cold rolled steel strips and coils, and HRPO coils, pickled, rolled and finished on one floor in Faridabad to ±0.01 mm.",
     meta: "Faridabad, Haryana · Est. 1994 · BSE 531810",
     description: [
       "Metal Coatings (India) Limited is a public limited company promoted by the Khandelwal family in December 1994 and listed on the BSE. It manufactures cold rolled steel strips and coils, and hot rolled pickled and oiled (HRPO) coils, at its integrated works in Sector 59, Faridabad.",
@@ -56,11 +76,23 @@ export const firms = [
     image: M + "mcil-coil-line.jpg",
     alt: "Cold rolled steel coils at the MCIL works",
     url: "https://www.mcil.net",
+    site: {
+      host: "mcil.net",
+      bg: "#f5f6f8",
+      header: { src: S + "mcil-header.webp", h: 50, always: true },
+      pages: [
+        { label: "Home", path: "/", img: S + "mcil-home.webp", h: 2960, scroll: 2060 },
+        { label: "Products", path: "/products", img: S + "mcil-products.webp", h: 1900, scroll: 640 },
+      ],
+    },
   },
   {
     id: "alwar",
     name: "KB Wires & Strips",
-    logo: M + "mark-blue.png",
+    mark: "KB Wires",
+    accent: "#8fc1d4",
+    logo: M + "mark-white.png",
+    tagline: "Galvanised steel tape, round wire and strip that armour the underground power and telecom cables of India's leading cable makers.",
     meta: "Alwar, Rajasthan · Cable input division",
     description: [
       "The group's Alwar plant in Matsya Industrial Area produces galvanised steel tape, wire and strip that armour underground power and telecom cables across India's infrastructure.",
@@ -76,6 +108,16 @@ export const firms = [
     image: M + "alwar-galvanizing.jpg",
     alt: "Galvanising line for steel wire and strip",
     url: "https://khandelwalbusar.com/products?cat=wires",
+    // no site of its own yet: the Alwar plant and cable accessories pages on khandelwalbusar.com
+    site: {
+      host: "khandelwalbusar.com",
+      bg: "#1a2d50",
+      header: { src: S + "kbi-header.webp", h: 77 },
+      pages: [
+        { label: "Alwar plant", path: "/about_us", img: S + "kbws-about.webp", h: 2300, scroll: 1400 },
+        { label: "Cable accessories", path: "/products?cat=wires", img: S + "kbws-products.webp", h: 1350, scroll: 450 },
+      ],
+    },
   },
 ];
 

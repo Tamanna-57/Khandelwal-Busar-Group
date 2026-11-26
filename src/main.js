@@ -31,34 +31,62 @@ $("#logos").innerHTML = reduceMotion
   ? logoItems
   : logoItems + logoItems.replaceAll("<li>", '<li aria-hidden="true">').replaceAll('alt="', 'alt="" data-alt="');
 
-$("#cosDeck").innerHTML = firms
-  .map(
-    (f, i) => `<li class="card" id="co-${f.id}">
-      <div class="card__body">
-        <div class="card__top">
-          <div class="card__logo"><img src="${f.logo}" alt="" /><span>${f.category.split(" · ")[0]}</span></div>
-          <span class="card__idx">${pad2(i + 1)}<small>/${pad2(firms.length)}</small></span>
-        </div>
-        <h3 class="card__name">${f.name}</h3>
-        <p class="card__meta">${f.meta}</p>
-        <div class="card__text">${f.description.map((p) => `<p>${p}</p>`).join("")}</div>
-        <div class="card__figs">${f.figures.map(([v, l]) => `<div><b>${v}</b><span>${l}</span></div>`).join("")}</div>
-        <div class="card__foot">
-          <p class="card__cat">${f.category}</p>
-          <a class="card__btn" href="${f.url}" target="_blank" rel="noopener">Visit website</a>
-        </div>
-      </div>
-      <div class="card__media">
-        <img src="${f.image}" alt="${f.alt}" />
-        <span class="card__tag">${f.meta.split(" · ")[0]}</span>
-      </div>
-      <span class="card__shade" aria-hidden="true"></span>
-    </li>`
-  )
-  .join("");
+/* Companies: per company a wordmark panel, then a browser frame
+   that tours captures of that company's own website */
+const LOCK = '<svg viewBox="0 0 16 16" aria-hidden="true"><path d="M4.5 7V5a3.5 3.5 0 0 1 7 0v2h.5a1 1 0 0 1 1 1v6a1 1 0 0 1-1 1H4a1 1 0 0 1-1-1V8a1 1 0 0 1 1-1h.5Zm1.5 0h4V5a2 2 0 1 0-4 0v2Z" fill="currentColor"/></svg>';
+const pathText = (p) => (p === "/" ? "" : p);
 
-$("#cosDots").innerHTML = firms
-  .map((f, i) => `<button type="button" role="tab" aria-label="${f.name}" aria-selected="${i === 0}" data-i="${i}"></button>`)
+$("#cosTrack").insertAdjacentHTML(
+  "beforeend",
+  firms
+    .map((f, i) => {
+      const { host, header, pages } = f.site;
+      return `<article class="co" id="co-${f.id}" style="--co:${f.accent};--site-bg:${f.site.bg}" aria-labelledby="co-${f.id}-name">
+      <div class="co__brand">
+        <div class="co__brand-in">
+          <p class="co__top"><span class="co__idx">${pad2(i + 1)}<small>/${pad2(firms.length)}</small></span><span class="co__cat">${f.category}</span></p>
+          <p class="co__mark" aria-hidden="true" style="--fill:url('${f.image}')">${f.mark}</p>
+          <div class="co__id">
+            <img class="co__logo" src="${f.logo}" alt="" width="40" height="32" />
+            <div><h3 class="co__name" id="co-${f.id}-name">${f.name}</h3><p class="co__meta">${f.meta}</p></div>
+          </div>
+          <p class="co__text">${f.tagline}</p>
+          <div class="co__figs">${f.figures.map(([v, l]) => `<div><b>${v}</b><span>${l}</span></div>`).join("")}</div>
+        </div>
+      </div>
+      <div class="co__site">
+        <div class="browser">
+          <div class="browser__bar">
+            <span class="browser__dots" aria-hidden="true"><i></i><i></i><i></i></span>
+            <span class="browser__url">${LOCK}<b>${host}</b><span class="browser__path">${pathText(pages[0].path)}</span></span>
+            <span class="browser__load" aria-hidden="true"></span>
+          </div>
+          <div class="browser__view">
+            ${pages
+              .map(
+                (p, k) => `<div class="browser__page${k === 0 ? " is-on" : ""}" style="--h:${p.h}">
+              ${p.video ? `<video muted loop playsinline preload="none" poster="${p.video.poster}" data-src="${p.video.src}" style="--vt:${p.video.top};--vh:${p.video.h};--vz:${p.video.zoom || 1}" aria-hidden="true"></video>` : ""}
+              <img data-src="${p.img}" alt="${f.name} website, ${p.label.toLowerCase()} page" width="1440" height="${p.h}" decoding="async" />
+            </div>`
+              )
+              .join("")}
+            <img class="browser__hdr${header.always ? " is-on" : ""}" data-src="${header.src}" alt="" width="1440" height="${header.h}" />
+          </div>
+        </div>
+        <div class="co__cap">
+          <div class="co__tabs" role="group" aria-label="${f.name} website pages">${pages
+            .map((p, k) => `<button type="button" data-k="${k}"${k === 0 ? ' aria-current="true"' : ""}><span>${pad2(k + 1)}</span>${p.label}</button>`)
+            .join("")}</div>
+          <a class="co__visit" href="${f.url}" target="_blank" rel="noopener">Visit website<span aria-hidden="true">↗</span></a>
+        </div>
+      </div>
+    </article>`;
+    })
+    .join("")
+);
+
+$("#cosNav").innerHTML = firms
+  .map((f, i) => `<button type="button" data-i="${i}" style="--co:${f.accent}"${i === 0 ? ' aria-current="true"' : ""}><span>${pad2(i + 1)}</span>${f.mark}</button>`)
   .join("");
 
 /* Our story timeline */
@@ -156,125 +184,237 @@ $$("#drawer a").forEach((a) => a.addEventListener("click", () => setDrawer(false
 window.addEventListener("keydown", (e) => e.key === "Escape" && setDrawer(false));
 
 /* ------------------------------------------------------------
-   Companies
-   Desktop: the section pins; scrolling slides each card in over
-   the last one, which steps back into a stack. After the last
-   card the Our Story timeline slides up over the whole section.
-   Small screens: a swipeable row.
+   Companies: horizontal scroll (after tehtariknation.com)
+   The section pins and scrolling down slides a track sideways:
+   the intro, then for each company a giant wordmark and a browser
+   frame. Each frame stops in the middle and scrolls through
+   captures of that company's website, changing page as if you
+   had clicked a link, before the track moves on. After the
+   last company the Our Story timeline slides up over the section.
+   Reduced motion: a plain swipeable row; the tabs switch pages and
+   each frame scrolls by hand.
    ------------------------------------------------------------ */
 const cos = $(".cos");
 const story = $("#story");
-const cards = $$(".card", $("#cosDeck"));
-const shades = cards.map((c) => $(".card__shade", c));
-const dots = $$("#cosDots button");
-const prev = $(".arrow--prev");
-const next = $(".arrow--next");
+const stage = $(".cos__stage");
+const cosTrack = $("#cosTrack");
 const dim = $(".cos__dim");
-const n = cards.length;
-let current = -1;
-let goTo = () => {};
+const progressBar = $("#cosProgress");
+const navBtns = $$("#cosNav button");
+const clamp01 = (v) => Math.min(1, Math.max(0, v));
+const PAGE_W = 1440; // window width the site captures were taken at
 
-function setCurrent(i) {
-  if (i === current) return;
-  current = i;
-  dots.forEach((d, k) => d.setAttribute("aria-selected", String(k === i)));
-  prev.disabled = i === 0;
-  next.disabled = i === n - 1;
+const cosFirms = $$(".co", cosTrack).map((el, i) => {
+  const spec = firms[i].site;
+  return {
+    el,
+    brand: $(".co__brand", el),
+    mark: $(".co__mark", el),
+    site: $(".co__site", el),
+    browser: $(".browser", el),
+    view: $(".browser__view", el),
+    path: $(".browser__path", el),
+    load: $(".browser__load", el),
+    hdr: $(".browser__hdr", el),
+    hdrAlways: !!spec.header.always,
+    tabs: $$(".co__tabs button", el),
+    pages: $$(".browser__page", el).map((pg, k) => ({ el: pg, spec: spec.pages[k], video: $("video", pg), max: 0 })),
+    shown: 0,
+    brandC: 0,
+    siteC: 0,
+  };
+});
+
+// the captures only load once the section is close
+const mediaIO = new IntersectionObserver(
+  (entries) => {
+    if (!entries.some((e) => e.isIntersecting)) return;
+    $$("img[data-src]", cos).forEach((img) => { img.src = img.dataset.src; img.removeAttribute("data-src"); });
+    mediaIO.disconnect();
+  },
+  { rootMargin: "150% 0px" }
+);
+mediaIO.observe(cos);
+
+function setVideo(v, on) {
+  if (on && v.dataset.src) { v.src = v.dataset.src; v.removeAttribute("data-src"); }
+  if (on && v.paused) v.play().catch(() => {});
+  else if (!on && !v.paused) v.pause();
 }
 
-function layoutDeck(pos) {
-  const cw = cards[0].offsetWidth;
-  cards.forEach((card, i) => {
-    const d = i - pos;
-    let x = 0, s = 1, shade = 0;
-    if (d >= 0) {
-      x = d * (cw + 48);
-    } else {
-      const e = Math.min(-d, 2);
-      x = -e * 56;
-      s = 1 - e * 0.07;
-      shade = e * 0.32;
-    }
-    gsap.set(card, { x, scale: s, zIndex: 10 + i });
-    shades[i].style.opacity = shade.toFixed(3);
+function markPage(f, cur) {
+  if (cur === f.shown) return;
+  f.shown = cur;
+  f.path.textContent = pathText(f.pages[cur].spec.path);
+  f.tabs.forEach((t, k) => (k === cur ? t.setAttribute("aria-current", "true") : t.removeAttribute("aria-current")));
+}
+
+function markFirm(cur) {
+  navBtns.forEach((b, k) => (k === cur ? b.setAttribute("aria-current", "true") : b.removeAttribute("aria-current")));
+}
+
+// pos: page index (fractional while changing page); ys: how far down each page is, 0..1
+function showPage(f, pos, ys) {
+  f.pages.forEach((p, k) => {
+    // like following a link: the old page goes, a beat of empty window, then the new one
+    const d = pos - k;
+    const o = d >= 0 ? clamp01(1 - d / 0.45) : clamp01((1 + d - 0.55) / 0.45);
+    p.el.style.opacity = o.toFixed(3);
+    p.el.style.visibility = o > 0 ? "visible" : "hidden";
+    p.el.style.transform = `translate3d(0, ${((-ys[k] * p.max) / p.spec.h * 100).toFixed(3)}%, 0)`;
   });
+  const cur = Math.round(pos);
+  markPage(f, cur);
+  const frac = pos - Math.floor(pos);
+  f.load.style.transform = `scaleX(${frac.toFixed(3)})`;
+  f.load.style.opacity = frac > 0.001 && frac < 0.999 ? "1" : "0";
+  f.hdr.classList.toggle("is-on", f.hdrAlways || ys[cur] * f.pages[cur].max > 60);
 }
+
+let goToFirm = () => {};
+let goToPage = () => {};
+navBtns.forEach((b) => b.addEventListener("click", () => goToFirm(Number(b.dataset.i))));
+cosFirms.forEach((f, i) => f.tabs.forEach((t) => t.addEventListener("click", () => goToPage(i, Number(t.dataset.k)))));
 
 const mm = gsap.matchMedia();
-mm.add("(min-width: 901px) and (min-height: 601px)", () => {
-  const travel = () => window.innerHeight * 0.85 * (n - 1); // scroll spent moving through the cards
-  const cover = () => cos.offsetHeight;                      // scroll spent while the timeline slides over
+mm.add("(prefers-reduced-motion: no-preference)", () => {
+  cos.classList.add("is-pinned");
+  const cover = () => cos.offsetHeight; // scroll spent while the timeline slides over
   const setOverlap = () => { story.style.marginTop = `-${cover()}px`; };
   setOverlap();
+
+  // mostly linear so the track follows the wheel, softened into each stop
+  const ease = (t) => t * 0.45 + t * t * (3 - 2 * t) * 0.55;
+  let plan = { segs: [], total: 1, firmAt: [], pageAt: [], firmEnd: [] };
+
+  // Lay the scroll out as a run of segments: slide to the wordmark, hold,
+  // slide to the frame, scroll each page (cross-fading between them), hold.
+  function measure() {
+    const vw = window.innerWidth;
+    const vh = window.innerHeight;
+    const minX = Math.min(0, vw - cosTrack.scrollWidth);
+    const stop = (c) => Math.min(0, Math.max(minX, vw / 2 - c));
+    const segs = [];
+    const firmAt = [], pageAt = [], firmEnd = [];
+    let at = 0, x = 0;
+    const push = (seg) => { seg.start = at; at += seg.len; segs.push(seg); };
+    const slide = (to) => { push({ type: "h", from: x, to, len: Math.abs(to - x) * 0.75 + 1 }); x = to; };
+
+    cosFirms.forEach((f, i) => {
+      f.brandC = f.brand.offsetLeft + f.brand.offsetWidth / 2;
+      f.siteC = f.site.offsetLeft + f.site.offsetWidth / 2;
+      slide(stop(f.brandC));
+      firmAt[i] = at;
+      push({ type: "hold", len: vh * 0.2 });
+      slide(stop(f.siteC));
+
+      const viewW = f.view.clientWidth || 1;
+      const visible = (PAGE_W * f.view.clientHeight) / viewW; // page px that fit in the frame
+      const scale = viewW / PAGE_W;
+      pageAt[i] = [];
+      f.pages.forEach((p, k) => {
+        p.max = Math.max(0, Math.min(p.spec.scroll, p.spec.h - visible));
+        if (k > 0) push({ type: "nav", i, from: k - 1, len: vh * 0.3 });
+        pageAt[i][k] = at;
+        push({ type: "scroll", i, k, len: Math.max(1, p.max * scale * 0.6) });
+      });
+      push({ type: "hold", len: vh * 0.15 });
+      firmEnd[i] = at;
+    });
+    plan = { segs, total: at, firmAt, pageAt, firmEnd };
+  }
+
+  const state = cosFirms.map((f) => ({ pos: 0, ys: f.pages.map(() => 0) }));
+  let activeFirm = 0;
+
+  function render(offset) {
+    let x = 0;
+    state.forEach((s) => { s.pos = 0; s.ys.fill(0); });
+    for (const seg of plan.segs) {
+      if (offset <= seg.start) break;
+      const t = clamp01((offset - seg.start) / seg.len);
+      if (seg.type === "h") x = seg.from + (seg.to - seg.from) * ease(t);
+      else if (seg.type === "nav") state[seg.i].pos = seg.from + t;
+      else if (seg.type === "scroll") state[seg.i].ys[seg.k] = t;
+    }
+    cosTrack.style.transform = `translate3d(${x.toFixed(1)}px, 0, 0)`;
+
+    const vw = window.innerWidth;
+    cosFirms.forEach((f, i) => {
+      // the wordmark drifts against the track and its photo fill pans
+      const d = Math.max(-1.5, Math.min(1.5, (f.brandC + x - vw / 2) / vw));
+      f.mark.style.transform = `translate3d(${(-d * vw * 0.12).toFixed(1)}px, 0, 0)`;
+      f.mark.style.backgroundPosition = `${(50 + d * 40).toFixed(2)}% 50%`;
+      // the frame grows to full size as it reaches the middle
+      const d2 = Math.min(1, Math.abs((f.siteC + x - vw / 2) / vw));
+      f.browser.style.transform = `scale(${(1 - d2 * 0.12).toFixed(4)})`;
+      showPage(f, state[i].pos, state[i].ys);
+      f.pages.forEach((p, k) => p.video && setVideo(p.video, d2 < 0.75 && Math.abs(state[i].pos - k) < 1));
+    });
+
+    let cur = plan.firmEnd.findIndex((end) => offset < end);
+    if (cur === -1) cur = cosFirms.length - 1;
+    if (cur !== activeFirm) { activeFirm = cur; markFirm(cur); }
+    progressBar.style.transform = `scaleX(${clamp01(offset / plan.total).toFixed(4)})`;
+
+    const p2 = clamp01((offset - plan.total) / cover());
+    dim.style.opacity = (p2 * 0.65).toFixed(3);
+    stage.style.transform = p2 > 0 ? `translate3d(0, ${(-p2 * 30).toFixed(1)}px, 0) scale(${(1 - p2 * 0.05).toFixed(4)})` : "";
+  }
 
   const st = ScrollTrigger.create({
     trigger: cos,
     start: "top top",
-    end: () => "+=" + (travel() + cover()),
+    end: () => { measure(); return "+=" + (plan.total + cover()); },
     pin: true,
     invalidateOnRefresh: true,
     onRefreshInit: setOverlap,
-    snap: {
-      snapTo: (p) => {
-        const split = travel() / (travel() + cover());
-        if (p > split) return p; // free scroll while the next page covers
-        return (Math.round((p / split) * (n - 1)) / (n - 1)) * split;
-      },
-      duration: { min: 0.2, max: 0.5 },
-      delay: 0.08,
-      ease: "power2.inOut",
-    },
-    onUpdate: (self) => {
-      const split = travel() / (travel() + cover());
-      const p1 = Math.min(1, self.progress / split);
-      const pos = p1 * (n - 1);
-      layoutDeck(pos);
-      setCurrent(Math.round(pos));
-      const p2 = Math.max(0, (self.progress - split) / (1 - split));
-      dim.style.opacity = (p2 * 0.65).toFixed(3);
-      gsap.set(".cos__stage", { scale: 1 - p2 * 0.05, y: -p2 * 30 });
-    },
+    onRefresh: (self) => render(self.scroll() - self.start),
+    onUpdate: (self) => render(self.scroll() - self.start),
   });
-  layoutDeck(0);
+  render(st.scroll() - st.start);
 
-  goTo = (i) => {
-    const split = travel() / (travel() + cover());
-    window.scrollTo({ top: st.start + (st.end - st.start) * split * (i / (n - 1)), behavior: reduceMotion ? "auto" : "smooth" });
-  };
-  current = -1;
-  dots.forEach((d, k) => d.setAttribute("aria-selected", String(k === 0)));
-  prev.disabled = true;
+  const jump = (offset) => window.scrollTo({ top: st.start + offset + 2, behavior: "smooth" });
+  goToFirm = (i) => jump(plan.firmAt[i]);
+  goToPage = (i, k) => jump(plan.pageAt[i][k]);
 
   return () => {
+    cos.classList.remove("is-pinned");
     story.style.marginTop = "";
-    gsap.set(cards, { clearProps: "transform,zIndex" });
-    gsap.set(".cos__stage", { clearProps: "transform" });
-    shades.forEach((s) => (s.style.opacity = 0));
+    cosTrack.style.transform = stage.style.transform = progressBar.style.transform = "";
     dim.style.opacity = 0;
-    goTo = () => {};
-  };
-});
-
-mm.add("(max-width: 900px), (max-height: 600px)", () => {
-  const deck = $("#cosDeck");
-  const onScroll = () => {
-    const mid = deck.scrollLeft + deck.clientWidth / 2;
-    let best = 0, dist = Infinity;
-    cards.forEach((c, k) => {
-      const d = Math.abs(c.offsetLeft + c.offsetWidth / 2 - mid);
-      if (d < dist) { dist = d; best = k; }
+    cosFirms.forEach((f) => {
+      f.mark.style.transform = f.mark.style.backgroundPosition = f.browser.style.transform = "";
+      f.pages.forEach((p) => {
+        p.el.style.opacity = p.el.style.visibility = p.el.style.transform = "";
+        if (p.video) setVideo(p.video, false);
+      });
     });
-    current = best;
-    dots.forEach((d, k) => d.setAttribute("aria-selected", String(k === best)));
+    goToFirm = goToPage = () => {};
   };
-  deck.addEventListener("scroll", onScroll, { passive: true });
-  goTo = (i) => deck.scrollTo({ left: cards[i].offsetLeft - (deck.clientWidth - cards[i].offsetWidth) / 2, behavior: "smooth" });
-  return () => deck.removeEventListener("scroll", onScroll);
 });
 
-prev.addEventListener("click", () => goTo(Math.max(0, current - 1)));
-next.addEventListener("click", () => goTo(Math.min(n - 1, current + 1)));
-dots.forEach((d) => d.addEventListener("click", () => goTo(Number(d.dataset.i))));
+mm.add("(prefers-reduced-motion: reduce)", () => {
+  const show = (f, k) => {
+    f.pages.forEach((p, j) => p.el.classList.toggle("is-on", j === k));
+    f.view.scrollTop = 0;
+    markPage(f, k);
+  };
+  cosFirms.forEach((f) => show(f, 0));
+  const onScroll = () => {
+    const mid = cosTrack.scrollLeft + cosTrack.clientWidth / 2;
+    const cur = cosFirms.findIndex((f) => f.el.offsetLeft + f.el.offsetWidth > mid);
+    markFirm(cur === -1 ? cosFirms.length - 1 : cur);
+  };
+  cosTrack.addEventListener("scroll", onScroll, { passive: true });
+  goToFirm = (i) => cosTrack.scrollTo({ left: cosFirms[i].el.offsetLeft });
+  goToPage = (i, k) => show(cosFirms[i], k);
+  return () => {
+    cosTrack.removeEventListener("scroll", onScroll);
+    cosFirms.forEach((f) => f.pages.forEach((p, j) => p.el.classList.toggle("is-on", j === 0)));
+    goToFirm = goToPage = () => {};
+  };
+});
 
 $$('a[href="#companies"]').forEach((a) =>
   a.addEventListener("click", (e) => {
@@ -351,3 +491,17 @@ if (!reduceMotion) {
 }
 
 window.addEventListener("load", () => { ScrollTrigger.refresh(); updateHeader(); });
+// Once Bebas Neue is in, measure each wordmark (in em) so CSS can fit long names to
+// the screen, then re-measure the track: the wordmarks set where every stop falls.
+const fitMarks = () => {
+  const ctx = document.createElement("canvas").getContext("2d");
+  ctx.font = '400 100px "Bebas Neue"';
+  cosFirms.forEach((f) => {
+    const t = f.mark.textContent;
+    f.mark.style.setProperty("--mark-em", (ctx.measureText(t).width / 100 + t.length * 0.01).toFixed(3));
+  });
+};
+fitMarks();
+(document.fonts ? document.fonts.load('400 100px "Bebas Neue"') : Promise.resolve())
+  .catch(() => {})
+  .then(() => { fitMarks(); ScrollTrigger.refresh(); });
