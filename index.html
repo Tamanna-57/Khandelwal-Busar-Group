@@ -27,6 +27,7 @@
             <li><a class="nav__link" href="#clients">Clients</a></li>
             <li><a class="nav__link" href="#companies">Companies</a></li>
             <li><a class="nav__link" href="#story">Our Story</a></li>
+            <li><a class="nav__link" href="#leadership">Leadership</a></li>
             <li><a class="nav__link" href="#contact">Contact</a></li>
           </ul>
           <span class="nav__ind" aria-hidden="true"></span>
@@ -40,6 +41,7 @@
         <a href="#clients">Clients</a>
         <a href="#companies">Companies</a>
         <a href="#story">Our Story</a>
+        <a href="#leadership">Leadership</a>
         <a href="#contact">Contact</a>
       </nav>
     </header>
@@ -146,6 +148,28 @@
           </div>
         </div>
       </section>
+      <!-- ================= LEADERSHIP (after citadelgroup.org) ================= -->
+      <section class="lead" id="leadership" data-surface="dark" aria-labelledby="leadTitle">
+        <div class="lead__in">
+          <h2 class="lead__title" id="leadTitle"><span>Meet the</span> Leadership</h2>
+          <ul class="lead__grid" id="leadGrid"></ul>
+        </div>
+      </section>
+
+      <div class="lead-modal" id="leadModal" hidden>
+        <div class="lead-modal__scrim" data-close></div>
+        <div class="lead-modal__panel" role="dialog" aria-modal="true" aria-labelledby="leadModalName">
+          <button class="lead-modal__close" type="button" aria-label="Close profile" data-close>×</button>
+          <img class="lead-modal__img" id="leadModalImg" src="" alt="" />
+          <div class="lead-modal__body">
+            <p class="lead-modal__chip" id="leadModalChip"></p>
+            <h3 class="lead-modal__name" id="leadModalName"></h3>
+            <p class="lead-modal__role" id="leadModalRole"></p>
+            <div class="lead-modal__bio" id="leadModalBio"></div>
+            <p class="lead-modal__qual"><b>Qualification</b><span id="leadModalQual"></span></p>
+          </div>
+        </div>
+      </div>
     </main>
 
     <!-- ================= FOOTER (after lumena-partners.com) ================= -->
@@ -160,6 +184,7 @@
             <a href="#clients">Clients</a>
             <a href="#companies">Companies</a>
             <a href="#story">Our Story</a>
+            <a href="#leadership">Leadership</a>
           </nav>
           <div class="ftr__col">
             <p class="ftr__h">Contact</p>

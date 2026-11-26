@@ -1,7 +1,7 @@
 import "./style.css";
 import { gsap } from "gsap";
 import { ScrollTrigger } from "gsap/ScrollTrigger";
-import { about, firms, clients, milestones, heroMetrics } from "./data.js";
+import { about, firms, clients, milestones, heroMetrics, leaders } from "./data.js";
 import glyphData from "./glyphs.json";
 import { createGlyphArt } from "./glyphArt.js";
 import { initHeroReveal } from "./heroReveal.js";
@@ -310,6 +310,47 @@ years.forEach((y) =>
 window.addEventListener("scroll", updateStory, { passive: true });
 window.addEventListener("resize", updateStory);
 updateStory();
+
+/* ------------------------------------------------------------
+   Leadership grid + profile panel (after citadelgroup.org)
+   ------------------------------------------------------------ */
+$("#leadGrid").innerHTML = leaders
+  .map(
+    (m, i) => `<li class="lead__card">
+      <div class="lead__img"><img src="${m.image}" alt="${m.name}" loading="lazy" /></div>
+      <h3 class="lead__name">${m.name}</h3>
+      <p class="lead__role">${m.role}</p>
+      <p class="lead__co">${m.company}</p>
+      <button class="lead__more" type="button" data-i="${i}">Read about ${m.first} <span aria-hidden="true">↗</span></button>
+    </li>`
+  )
+  .join("");
+
+const leadModal = $("#leadModal");
+let leadReturn = null;
+function openLeader(i) {
+  const m = leaders[i];
+  $("#leadModalImg").src = m.image;
+  $("#leadModalImg").alt = m.name;
+  $("#leadModalChip").textContent = m.chip;
+  $("#leadModalName").textContent = m.name;
+  $("#leadModalRole").textContent = `${m.role} · ${m.company}`;
+  $("#leadModalBio").innerHTML = m.bio.split(/\n\s*\n/).map((p) => `<p>${p}</p>`).join("");
+  $("#leadModalQual").textContent = m.qualification;
+  leadReturn = document.activeElement;
+  leadModal.hidden = false;
+  document.documentElement.style.overflow = "hidden";
+  $(".lead-modal__close", leadModal).focus();
+}
+function closeLeader() {
+  if (leadModal.hidden) return;
+  leadModal.hidden = true;
+  document.documentElement.style.overflow = "";
+  leadReturn?.focus?.();
+}
+$$(".lead__more").forEach((b) => b.addEventListener("click", () => openLeader(Number(b.dataset.i))));
+$$("[data-close]", leadModal).forEach((el) => el.addEventListener("click", closeLeader));
+window.addEventListener("keydown", (e) => e.key === "Escape" && closeLeader());
 
 /* ------------------------------------------------------------
    Small touches
