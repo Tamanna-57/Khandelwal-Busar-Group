@@ -1,9 +1,10 @@
 import "./style.css";
 import { gsap } from "gsap";
 import { ScrollTrigger } from "gsap/ScrollTrigger";
-import { about, firms, clients, milestones } from "./data.js";
+import { about, firms, clients, milestones, heroMetrics } from "./data.js";
 import glyphData from "./glyphs.json";
 import { createGlyphArt } from "./glyphArt.js";
+import { initHeroReveal } from "./heroReveal.js";
 
 gsap.registerPlugin(ScrollTrigger);
 
@@ -80,6 +81,9 @@ $("#storyList").innerHTML = milestones
     </li>`
   )
   .join("");
+
+/* Hero: scroll reveal through the KBI mark */
+initHeroReveal({ hero: $(".hero"), metrics: heroMetrics, reduceMotion });
 
 /* ------------------------------------------------------------
    Header: transparent over the hero, pill nav afterwards,
