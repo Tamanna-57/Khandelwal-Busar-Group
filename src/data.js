@@ -153,3 +153,12 @@ export const milestones = [
     tags: ["Electric vehicles"],
   },
 ];
+
+// Figures shown once the hero closes to solid navy.
+// Sources: khandelwalbusar.com (founded 1981, 30+ OEM customers) and the
+// group's own company list (KBI, MCIL, KB Wires & Strips).
+export const heroMetrics = [
+  { value: new Date().getFullYear() - 1981, suffix: "+", label: "Years of manufacturing, since 1981" },
+  { value: 30, suffix: "+", label: "OEM customers across India" },
+  { value: 3, suffix: "", label: "Group companies in Faridabad and Alwar" },
+];
