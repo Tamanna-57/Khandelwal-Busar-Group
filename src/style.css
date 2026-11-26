@@ -308,7 +308,14 @@ button { font: inherit; color: inherit; background: none; border: 0; cursor: poi
 .cos__progress i { display: block; height: 100%; background: var(--accent); transform: scaleX(0); transform-origin: 0 50%; }
 
 /* intro */
-.cos__intro { flex: none; width: min(60vw, 900px); height: 100%; display: flex; flex-direction: column; justify-content: center; padding: var(--hdr-h) 4vw 0 max(var(--pad), env(safe-area-inset-left, 0px)); }
+.cos__intro {
+  flex: none; width: min(60vw, 900px); height: 100%; display: flex; flex-direction: column; justify-content: center;
+  padding: var(--hdr-h) 4vw 0 max(var(--pad), env(safe-area-inset-left, 0px));
+  /* black on the left, deepening into KBI navy where the first wordmark panel begins */
+  background:
+    radial-gradient(60% 55% at 22% 48%, rgba(31, 95, 209, 0.2), rgba(31, 95, 209, 0) 70%),
+    linear-gradient(100deg, #050505 0%, #07102a 62%, #0d2152 100%);
+}
 .cos__eyebrow { font-size: 11px; font-weight: 700; letter-spacing: 0.28em; text-transform: uppercase; color: var(--grey-lt); }
 .cos__title { margin-top: 18px; font-size: clamp(40px, 6vw, 104px); font-weight: 700; line-height: 0.96; letter-spacing: 0.02em; text-transform: uppercase; }
 .cos__lede { margin-top: 24px; max-width: 24em; font-size: clamp(15px, 1.2vw, 19px); line-height: 1.55; color: rgba(255, 255, 255, 0.75); }
@@ -320,8 +327,44 @@ button { font: inherit; color: inherit; background: none; border: 0; cursor: poi
 /* one company = wordmark panel + website panel, each a full screen */
 .co { flex: none; display: flex; height: 100%; }
 
-.co__brand { flex: none; display: flex; align-items: center; width: 100vw; height: 100%; padding: calc(var(--hdr-h) + 2vh) 6vw 6vh; }
+.co__brand {
+  position: relative; isolation: isolate;
+  flex: none; display: flex; align-items: center; width: 100vw; height: 100%; padding: calc(var(--hdr-h) + 2vh) 6vw 6vh;
+  background: linear-gradient(140deg, var(--tint-a) 0%, var(--tint-b) 72%);
+}
 .co__brand-in { width: 100%; }
+
+/* backdrop: the company's photo in its own colour on the right, a glow behind the
+   wordmark and the stats, and a faint engineering grid */
+.co__bg { position: absolute; inset: 0; z-index: -1; overflow: hidden; pointer-events: none; }
+.co__bg i { position: absolute; display: block; }
+.co__photo {
+  inset: 0 -18%;
+  background: var(--fill) 50% 50% / cover no-repeat;
+  mix-blend-mode: luminosity;
+  opacity: 0.28;
+  -webkit-mask-image: linear-gradient(to left, #000 22%, rgba(0, 0, 0, 0.5) 48%, transparent 74%);
+  mask-image: linear-gradient(to left, #000 22%, rgba(0, 0, 0, 0.5) 48%, transparent 74%);
+  will-change: transform;
+}
+.co__glow {
+  inset: 0;
+  background:
+    radial-gradient(42% 52% at 26% 46%, var(--glow), transparent 100%),
+    radial-gradient(30% 38% at 84% 80%, var(--glow), transparent 100%);
+  opacity: 0.75;
+}
+/* a shade along the bottom for the text, and a grid that fades out away from the wordmark */
+.co__grid { inset: 0; background: linear-gradient(to top, rgba(0, 0, 0, 0.45), rgba(0, 0, 0, 0) 38%); }
+.co__grid::after {
+  content: ""; position: absolute; inset: 0;
+  background-image:
+    linear-gradient(rgba(255, 255, 255, 0.05) 1px, transparent 1px),
+    linear-gradient(90deg, rgba(255, 255, 255, 0.05) 1px, transparent 1px);
+  background-size: 80px 80px;
+  -webkit-mask-image: radial-gradient(75% 70% at 32% 45%, #000 15%, transparent 75%);
+  mask-image: radial-gradient(75% 70% at 32% 45%, #000 15%, transparent 75%);
+}
 .co__top { display: flex; align-items: center; gap: 14px; font-size: 11px; font-weight: 700; letter-spacing: 0.2em; text-transform: uppercase; color: var(--grey-lt); }
 .co__idx { display: inline-flex; align-items: baseline; gap: 14px; font-family: var(--font-hi); font-size: 26px; font-weight: 400; line-height: 1; letter-spacing: 0.04em; color: var(--co); }
 .co__idx small { margin-left: -12px; font-size: 0.6em; color: var(--grey-lt); }
@@ -351,9 +394,21 @@ button { font: inherit; color: inherit; background: none; border: 0; cursor: poi
 .co__name { font-size: clamp(16px, 1.5vw, 24px); font-weight: 700; line-height: 1.15; letter-spacing: 0.04em; text-transform: uppercase; }
 .co__meta { margin-top: 4px; font-size: 12.5px; font-weight: 500; color: var(--grey-lt); }
 .co__text { margin-top: 16px; font-size: clamp(14px, 1.05vw, 16px); line-height: 1.55; color: rgba(255, 255, 255, 0.78); }
-.co__figs { display: grid; grid-template-columns: repeat(3, auto); }
-.co__figs div { min-width: 0; padding-right: 26px; }
-.co__figs div + div { padding-left: 26px; border-left: 1px solid rgba(255, 255, 255, 0.14); }
+/* the three figures sit on a frosted card lit by the company colour */
+.co__figs {
+  position: relative;
+  display: grid; grid-template-columns: repeat(3, auto);
+  padding: 24px 4px 22px;
+  border: 1px solid rgba(255, 255, 255, 0.13);
+  border-radius: 18px;
+  background: linear-gradient(160deg, rgba(255, 255, 255, 0.1), rgba(255, 255, 255, 0.025) 60%), rgba(6, 8, 12, 0.4);
+  -webkit-backdrop-filter: blur(16px) saturate(1.2);
+  backdrop-filter: blur(16px) saturate(1.2);
+  box-shadow: 0 30px 70px rgba(0, 0, 0, 0.38), inset 0 1px 0 rgba(255, 255, 255, 0.1);
+}
+.co__figs::before { content: ""; position: absolute; left: 22px; right: 22px; top: -1px; height: 2px; border-radius: 2px; background: linear-gradient(90deg, transparent, var(--co), transparent); }
+.co__figs div { min-width: 0; padding: 0 26px; }
+.co__figs div + div { border-left: 1px solid rgba(255, 255, 255, 0.12); }
 .co__figs b { display: block; font-family: var(--font-hi); font-weight: 400; font-size: clamp(28px, 2.8vw, 46px); line-height: 0.95; letter-spacing: 0.01em; color: var(--co); }
 .co__figs span { display: block; max-width: 12em; margin-top: 4px; font-size: 11.5px; font-weight: 600; line-height: 1.35; color: var(--grey-lt); }
 
@@ -400,8 +455,8 @@ button { font: inherit; color: inherit; background: none; border: 0; cursor: poi
   .cos__intro { width: 88vw; padding-inline: max(var(--pad), env(safe-area-inset-left, 0px)) 6vw; }
   .co__brand { padding-inline: max(var(--pad), env(safe-area-inset-left, 0px)) max(var(--pad), env(safe-area-inset-right, 0px)); }
   .co__mark { font-size: min(40svh, calc((100vw - 2 * var(--pad)) / var(--mark-em, 3))); }
-  .co__figs div { padding-right: 14px; }
-  .co__figs div + div { padding-left: 14px; }
+  .co__figs { width: 100%; grid-template-columns: repeat(3, minmax(0, 1fr)); padding: 18px 0 16px; border-radius: 14px; }
+  .co__figs div { padding: 0 14px; }
   .co__figs b { font-size: 28px; }
   .site__bar { bottom: 18px; gap: 8px; }
   .site__addr { flex: 1 1 100%; height: 36px; padding: 0 14px; font-size: 12px; }
