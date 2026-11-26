@@ -2,6 +2,7 @@ import "./style.css";
 import { gsap } from "gsap";
 import { ScrollTrigger } from "gsap/ScrollTrigger";
 import { about, firms, clients, milestones } from "./data.js";
+import { createGlyphArt } from "./glyphArt.js";
 
 gsap.registerPlugin(ScrollTrigger);
 
@@ -92,10 +93,9 @@ const sectionIds = navLinks.map((a) => a.getAttribute("href").slice(1));
 
 function placeIndicator(link) {
   if (!link) return ind.classList.remove("is-on");
-  const nav = $("#nav").getBoundingClientRect();
-  const r = link.getBoundingClientRect();
-  ind.style.setProperty("--ind-x", `${r.left - nav.left}px`);
-  ind.style.setProperty("--ind-w", `${r.width}px`);
+  // offset* ignores the pill's pop-in scale, so the highlight lands exactly on the link
+  ind.style.setProperty("--ind-x", `${link.offsetLeft}px`);
+  ind.style.setProperty("--ind-w", `${link.offsetWidth}px`);
   ind.classList.add("is-on");
 }
 
@@ -151,78 +151,6 @@ $$("#drawer a").forEach((a) => a.addEventListener("click", () => setDrawer(false
 window.addEventListener("keydown", (e) => e.key === "Escape" && setDrawer(false));
 
 /* ------------------------------------------------------------
-   Photo reveal: the image builds up through a grid of black
-   cells with flickering 0/1 digits that clear in random order
-   ------------------------------------------------------------ */
-async function revealMedia(media) {
-  if (media.dataset.revealed) return;
-  media.dataset.revealed = "1";
-  const img = $("img", media);
-  try { await img.decode(); } catch (e) { /* show it anyway */ }
-  media.classList.add("is-revealed");
-  if (reduceMotion) return;
-
-  const w = media.clientWidth;
-  const h = media.clientHeight;
-  if (!w || !h) return;
-  const dpr = Math.min(2, window.devicePixelRatio || 1);
-  const canvas = document.createElement("canvas");
-  canvas.width = Math.round(w * dpr);
-  canvas.height = Math.round(h * dpr);
-  media.append(canvas);
-  const ctx = canvas.getContext("2d");
-  ctx.scale(dpr, dpr);
-
-  const size = Math.max(30, Math.round(w / 13));
-  const cols = Math.ceil(w / size);
-  const rows = Math.ceil(h / size);
-  const cells = [];
-  for (let r = 0; r < rows; r++) {
-    for (let c = 0; c < cols; c++) {
-      const roll = Math.random();
-      cells.push({
-        x: c * size,
-        y: r * size,
-        t: 120 + Math.random() * 820 + (r / rows) * 260, // ms until this cell clears
-        kind: roll < 0.1 ? "flash" : roll < 0.3 ? "ghost" : roll < 0.78 ? "digit" : "black",
-        bit: Math.random() < 0.5 ? 0 : 1,
-      });
-    }
-  }
-  const end = Math.max(...cells.map((c) => c.t)) + 60;
-  ctx.font = `500 ${Math.max(10, Math.round(size * 0.28))}px "IBM Plex Mono", ui-monospace, Menlo, monospace`;
-  ctx.textAlign = "center";
-  ctx.textBaseline = "middle";
-
-  const start = performance.now();
-  const frame = (now) => {
-    const e = now - start;
-    ctx.clearRect(0, 0, w, h);
-    for (const cell of cells) {
-      if (e >= cell.t) continue;
-      if (cell.kind === "flash" && e > cell.t - 90) {
-        ctx.fillStyle = "#ffffff";
-        ctx.fillRect(cell.x, cell.y, size, size);
-      } else if (cell.kind === "ghost" && e > cell.t * 0.55) {
-        ctx.fillStyle = "rgba(0,0,0,0.6)";
-        ctx.fillRect(cell.x, cell.y, size, size);
-      } else {
-        ctx.fillStyle = "#000000";
-        ctx.fillRect(cell.x, cell.y, size, size);
-        if (cell.kind === "digit") {
-          const bit = (cell.bit + Math.floor(e / 140)) % 2;
-          ctx.fillStyle = "rgba(255,255,255,0.85)";
-          ctx.fillText(String(bit), cell.x + size / 2, cell.y + size / 2);
-        }
-      }
-    }
-    if (e < end) requestAnimationFrame(frame);
-    else canvas.remove();
-  };
-  requestAnimationFrame(frame);
-}
-
-/* ------------------------------------------------------------
    Companies
    Desktop: the section pins; scrolling slides each card in over
    the last one, which steps back into a stack. After the last
@@ -232,7 +160,6 @@ async function revealMedia(media) {
 const cos = $(".cos");
 const story = $("#story");
 const cards = $$(".card", $("#cosDeck"));
-const medias = cards.map((c) => $(".card__media", c));
 const shades = cards.map((c) => $(".card__shade", c));
 const dots = $$("#cosDots button");
 const prev = $(".arrow--prev");
@@ -248,7 +175,6 @@ function setCurrent(i) {
   dots.forEach((d, k) => d.setAttribute("aria-selected", String(k === i)));
   prev.disabled = i === 0;
   next.disabled = i === n - 1;
-  revealMedia(medias[i]);
 }
 
 function layoutDeck(pos) {
@@ -306,9 +232,6 @@ mm.add("(min-width: 901px) and (min-height: 601px)", () => {
   });
   layoutDeck(0);
 
-  // first card builds in when the section arrives
-  ScrollTrigger.create({ trigger: cos, start: "top 60%", once: true, onEnter: () => revealMedia(medias[0]) });
-
   goTo = (i) => {
     const split = travel() / (travel() + cover());
     window.scrollTo({ top: st.start + (st.end - st.start) * split * (i / (n - 1)), behavior: reduceMotion ? "auto" : "smooth" });
@@ -340,13 +263,8 @@ mm.add("(max-width: 900px), (max-height: 600px)", () => {
     dots.forEach((d, k) => d.setAttribute("aria-selected", String(k === best)));
   };
   deck.addEventListener("scroll", onScroll, { passive: true });
-  const io = new IntersectionObserver(
-    (entries) => entries.forEach((e) => e.isIntersecting && revealMedia(e.target)),
-    { threshold: 0.45 }
-  );
-  medias.forEach((m) => io.observe(m));
   goTo = (i) => deck.scrollTo({ left: cards[i].offsetLeft - (deck.clientWidth - cards[i].offsetWidth) / 2, behavior: "smooth" });
-  return () => { deck.removeEventListener("scroll", onScroll); io.disconnect(); };
+  return () => deck.removeEventListener("scroll", onScroll);
 });
 
 prev.addEventListener("click", () => goTo(Math.max(0, current - 1)));
@@ -371,6 +289,7 @@ const bar = $("#storyBar");
 const nYears = milestones.length;
 const lerp = (a, b, t) => a + (b - a) * t;
 let activeYear = 0;
+const art = createGlyphArt($("#storyArt"), { reduceMotion });
 
 function yearStyle(d) {
   // as in the reference: 4.5rem active, 2.75rem neighbours, 1.5rem the rest
@@ -398,6 +317,7 @@ function updateStory() {
   if (idx !== activeYear) {
     activeYear = idx;
     items.forEach((it, i) => it.classList.toggle("is-active", i === idx));
+    art.pulse();
     years.forEach((y, i) => (i === idx ? y.setAttribute("aria-current", "step") : y.removeAttribute("aria-current")));
   }
 }
