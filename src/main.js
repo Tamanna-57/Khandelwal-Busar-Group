@@ -2,7 +2,6 @@ import "./style.css";
 import { gsap } from "gsap";
 import { ScrollTrigger } from "gsap/ScrollTrigger";
 import { about, firms, clients, milestones } from "./data.js";
-import glyphData from "./glyphs.json";
 import { createGlyphArt } from "./glyphArt.js";
 
 gsap.registerPlugin(ScrollTrigger);
@@ -372,7 +371,7 @@ const bar = $("#storyBar");
 const nYears = milestones.length;
 const lerp = (a, b, t) => a + (b - a) * t;
 let activeYear = 0;
-const art = createGlyphArt($("#storyArt"), glyphData, { reduceMotion });
+const art = createGlyphArt($("#storyArt"), { reduceMotion });
 
 function yearStyle(d) {
   // as in the reference: 4.5rem active, 2.75rem neighbours, 1.5rem the rest
@@ -400,7 +399,7 @@ function updateStory() {
   if (idx !== activeYear) {
     activeYear = idx;
     items.forEach((it, i) => it.classList.toggle("is-active", i === idx));
-    art.setShape(idx);
+    art.pulse();
     years.forEach((y, i) => (i === idx ? y.setAttribute("aria-current", "step") : y.removeAttribute("aria-current")));
   }
 }
