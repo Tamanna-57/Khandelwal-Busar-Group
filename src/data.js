@@ -2,7 +2,6 @@
 // both companies belong to the Khandelwal Busar Group.
 
 const M = "/media/img/";
-const S = "/media/sites/"; // captures of each company's own website, shown full screen
 
 export const about = {
   title: "Supplying India's leading manufacturers",
@@ -41,26 +40,6 @@ export const firms = [
     image: M + "kbi-shop-floor.jpg",
     alt: "KBI press and fabrication shop floor in Faridabad",
     url: "https://khandelwalbusar.com",
-    // Each page is captured twice, without the site's own header: d at a 1440px-wide
-    // desktop window, m at a 390px-wide phone. h = captured height and scroll = how far
-    // the panel scrolls down it, both in CSS px of that window.
-    site: {
-      host: "khandelwalbusar.com",
-      bg: "#1a2d50",
-      pages: [
-        {
-          label: "Home", path: "/",
-          d: { img: S + "kbi-home.webp", h: 2670, scroll: 1220 },
-          m: { img: S + "kbi-home-m.webp", h: 2620, scroll: 1620 },
-        },
-        {
-          label: "Processes", path: "/processes",
-          d: { img: S + "kbi-processes.webp", h: 3510, scroll: 2060, video: { x: -86.4, y: -54, w: 1612.8, h: 1008 } },
-          m: { img: S + "kbi-processes-m.webp", h: 3650, scroll: 2650, video: { x: -23.4, y: -50.6, w: 436.8, h: 945.3 } },
-          video: { src: "/media/video/kbi-processes.mp4", poster: S + "kbi-processes-poster.jpg" },
-        },
-      ],
-    },
   },
   {
     id: "mcil",
@@ -85,27 +64,11 @@ export const firms = [
     image: M + "mcil-coil-line.jpg",
     alt: "Cold rolled steel coils at the MCIL works",
     url: "https://www.mcil.net",
-    site: {
-      host: "mcil.net",
-      bg: "#f5f6f8",
-      pages: [
-        {
-          label: "Home", path: "/",
-          d: { img: S + "mcil-home.webp", h: 3471, scroll: 2021 },
-          m: { img: S + "mcil-home-m.webp", h: 3540, scroll: 2540 },
-        },
-        {
-          label: "Products", path: "/products",
-          d: { img: S + "mcil-products.webp", h: 2150, scroll: 700 },
-          m: { img: S + "mcil-products-m.webp", h: 1780, scroll: 780 },
-        },
-      ],
-    },
   },
   {
     id: "alwar",
-    name: "KB Wires & Strips",
-    mark: "KB Wires",
+    name: "KBI Wires & Strips",
+    mark: "KBI Wires",
     accent: "#8fc1d4",
     tint: ["#0b2a35", "#03090c"], // backdrop of the wordmark panel, top-left to bottom-right
     logo: M + "mark-white.png",
@@ -125,23 +88,6 @@ export const firms = [
     image: M + "alwar-galvanizing.jpg",
     alt: "Galvanising line for steel wire and strip",
     url: "https://khandelwalbusar.com/products?cat=wires",
-    // no site of its own yet: the Alwar plant and cable accessories pages on khandelwalbusar.com
-    site: {
-      host: "khandelwalbusar.com",
-      bg: "#1a2d50",
-      pages: [
-        {
-          label: "Alwar plant", path: "/about_us",
-          d: { img: S + "kbws-about.webp", h: 2850, scroll: 1400 },
-          m: { img: S + "kbws-about-m.webp", h: 2760, scroll: 1760 },
-        },
-        {
-          label: "Cable accessories", path: "/products?cat=wires",
-          d: { img: S + "kbws-products.webp", h: 1879, scroll: 450 },
-          m: { img: S + "kbws-products-m.webp", h: 1560, scroll: 560 },
-        },
-      ],
-    },
   },
 ];
 
@@ -222,7 +168,7 @@ export const milestones = [
 
 // Figures shown once the hero closes to solid navy.
 // Sources: khandelwalbusar.com (founded 1981, 30+ OEM customers) and the
-// group's own company list (KBI, MCIL, KB Wires & Strips).
+// group's own company list (KBI, MCIL, KBI Wires & Strips).
 export const heroMetrics = [
   { value: new Date().getFullYear() - 1981, suffix: "+", label: "Years of manufacturing, since 1981" },
   { value: 30, suffix: "+", label: "OEM customers across India" },
