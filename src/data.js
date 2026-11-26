@@ -23,6 +23,7 @@ export const firms = [
     name: "Khandelwal Busar Industries",
     mark: "KBI",
     accent: "#4b86f2",
+    tint: ["#0d2152", "#040917"], // backdrop of the wordmark panel, top-left to bottom-right
     logo: M + "mark-white.png",
     tagline: "Sheet-metal and fabricated assemblies (axles, chassis, cabins and pedals) for India's automobile, tractor, construction-equipment and defence OEMs.",
     meta: "Faridabad, Haryana · Est. 1981",
@@ -66,6 +67,7 @@ export const firms = [
     name: "Metal Coatings (India) Ltd",
     mark: "MCIL",
     accent: "#d6a54f",
+    tint: ["#2e200c", "#0b0805"], // backdrop of the wordmark panel, top-left to bottom-right
     logo: M + "mcil-mark-white.png",
     tagline: "Cold rolled steel strips and coils, and HRPO coils, pickled, rolled and finished on one floor in Faridabad to ±0.01 mm.",
     meta: "Faridabad, Haryana · Est. 1994 · BSE 531810",
@@ -105,6 +107,7 @@ export const firms = [
     name: "KB Wires & Strips",
     mark: "KB Wires",
     accent: "#8fc1d4",
+    tint: ["#0b2a35", "#03090c"], // backdrop of the wordmark panel, top-left to bottom-right
     logo: M + "mark-white.png",
     tagline: "Galvanised steel tape, round wire and strip that armour the underground power and telecom cables of India's leading cable makers.",
     meta: "Alwar, Rajasthan · Cable input division",
