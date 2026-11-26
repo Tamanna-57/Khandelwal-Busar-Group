@@ -3,7 +3,7 @@
 
    The hero is three screens tall and its stage stays pinned.
    While you scroll:
-     1. a navy plane with a hole in the shape of the KBI mark sits
+     1. a navy plane with a hole in the shape of India sits
         over the video; the hole starts far larger than the screen,
         so navy only creeps in from the edges, then it shrinks to
         nothing (the plane is tilted back slightly, as on Citadel);
@@ -18,8 +18,10 @@ const range = (q, a, b) => clamp01((q - a) / (b - a));
 const easeOutExpo = (t) => (t >= 1 ? 1 : 1 - Math.pow(2, -10 * t));
 const easeOutCubic = (t) => 1 - Math.pow(1 - t, 3);
 
-// KBI mark outline in its own units (see the <g class="hero__hole"> shapes)
-const MARK = { cx: 511, cy: 374, w: 857, h: 692 };
+// India outline in its own units (see the <g class="hero__hole"> path)
+// The zoom starts centred on central India (so navy creeps in evenly from the
+// edges) and drifts to the map's own centre as it shrinks.
+const MARK = { cx: 306, cy: 334, w: 612, h: 668, fx: 235, fy: 330 };
 
 export function initHeroReveal({ hero, metrics, reduceMotion }) {
   const pin = hero.querySelector(".hero__pin");
@@ -98,14 +100,16 @@ export function initHeroReveal({ hero, metrics, reduceMotion }) {
     body.style.transform = `translateY(${(-26 * q).toFixed(1)}px)`;
     body.style.opacity = (1 - range(q, 0.46, 0.6)).toFixed(3);
 
-    // 2. the KBI-shaped window: about 2.6x the screen width, shrinking to nothing
+    // 2. the India-shaped window: about 3.4x the screen width, shrinking to nothing
     const t = reduceMotion ? (q < 0.5 ? 0 : 1) : range(q, 0.2, 0.8);
-    // sized off whichever screen side the mark would hit first, so phones behave like desktop
-    const holeW = Math.max(W, (H * MARK.w) / MARK.h) * 2.6 * (1 - t);
+    // sized off whichever screen side the map would hit first, so phones behave like desktop
+    const holeW = Math.max(W, (H * MARK.w) / MARK.h) * 3.4 * (1 - t);
     const s = holeW / MARK.w;
+    const ox = MARK.fx + (MARK.cx - MARK.fx) * t;
+    const oy = MARK.fy + (MARK.cy - MARK.fy) * t;
     hole.setAttribute(
       "transform",
-      `translate(${PW / 2} ${PH / 2}) scale(${s.toFixed(5)}) translate(${-MARK.cx} ${-MARK.cy})`
+      `translate(${PW / 2} ${PH / 2}) scale(${s.toFixed(5)}) translate(${-ox.toFixed(2)} ${-oy.toFixed(2)})`
     );
     plane.style.visibility = t > 0 ? "visible" : "hidden";
     const tilt = 15 * (1 - range(q, 0.74, 0.84));

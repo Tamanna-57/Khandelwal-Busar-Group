@@ -173,7 +173,7 @@ button { font: inherit; color: inherit; background: none; border: 0; cursor: poi
 
 /* ============================================================
    HERO: built to the citadelgroup.org hero. Three screens tall;
-   the stage pins while a navy plane with a KBI-mark-shaped hole
+   the stage pins while a navy plane with an India-shaped hole
    shrinks over the video, then the figures count up on solid navy.
    ============================================================ */
 .hero { --navy: #0d1a3a; position: relative; height: 300svh; min-height: 1680px; background: var(--navy); }
