@@ -226,7 +226,10 @@ mm.add("(prefers-reduced-motion: no-preference)", () => {
     cosFirms.forEach((f) => {
       // the wordmark drifts against its panel, its photo fill pans and the backdrop photo lags
       const d = Math.max(-1.5, Math.min(1.5, (f.c + x - vw / 2) / vw));
-      f.mark.style.transform = `translate3d(${(-d * vw * 0.22).toFixed(1)}px, 0, 0)`;
+      // entering panels: the first letter only peeks a little past the panel edge (about 3vw);
+      // leaving panels drift gently the other way, hidden under the next panel
+      const shift = d > 0 ? -Math.min(d * 0.14, 0.09) * vw : -d * vw * 0.12;
+      f.mark.style.transform = `translate3d(${shift.toFixed(1)}px, 0, 0)`;
       f.photo.style.transform = `translate3d(${(-d * vw * 0.18).toFixed(1)}px, 0, 0)`;
       f.el.classList.toggle("is-in", inView && Math.abs(d) < 0.3);
     });
