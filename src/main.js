@@ -1,7 +1,7 @@
 import "./style.css";
 import { gsap } from "gsap";
 import { ScrollTrigger } from "gsap/ScrollTrigger";
-import { about, firms, clients, milestones, heroMetrics } from "./data.js";
+import { about, firms, clients, milestones, heroMetrics, leaders } from "./data.js";
 import glyphData from "./glyphs.json";
 import { createGlyphArt } from "./glyphArt.js";
 import { initHeroReveal } from "./heroReveal.js";
@@ -310,6 +310,120 @@ years.forEach((y) =>
 window.addEventListener("scroll", updateStory, { passive: true });
 window.addEventListener("resize", updateStory);
 updateStory();
+
+/* ------------------------------------------------------------
+   Leadership grid + profile panel (after citadelgroup.org)
+   ------------------------------------------------------------ */
+$("#leadGrid").innerHTML = leaders
+  .map(
+    (m, i) => `<li class="lead__card">
+      <div class="lead__img"><img src="${m.image}" alt="${m.name}" loading="lazy" /></div>
+      <h3 class="lead__name">${m.name}</h3>
+      <p class="lead__role">${m.role}</p>
+      <p class="lead__co">${m.company}</p>
+      <button class="lead__more" type="button" data-i="${i}">Read about ${m.first} <span aria-hidden="true">↗</span></button>
+    </li>`
+  )
+  .join("");
+
+const leadModal = $("#leadModal");
+let leadReturn = null;
+function openLeader(i) {
+  const m = leaders[i];
+  $("#leadModalImg").src = m.image;
+  $("#leadModalImg").alt = m.name;
+  $("#leadModalChip").textContent = m.chip;
+  $("#leadModalName").textContent = m.name;
+  $("#leadModalRole").textContent = `${m.role} · ${m.company}`;
+  $("#leadModalBio").innerHTML = m.bio.split(/\n\s*\n/).map((p) => `<p>${p}</p>`).join("");
+  $("#leadModalQual").textContent = m.qualification;
+  leadReturn = document.activeElement;
+  leadModal.hidden = false;
+  document.documentElement.style.overflow = "hidden";
+  $(".lead-modal__close", leadModal).focus();
+}
+function closeLeader() {
+  if (leadModal.hidden) return;
+  leadModal.hidden = true;
+  document.documentElement.style.overflow = "";
+  leadReturn?.focus?.();
+}
+$$(".lead__more").forEach((b) => b.addEventListener("click", () => openLeader(Number(b.dataset.i))));
+$$("[data-close]", leadModal).forEach((el) => el.addEventListener("click", closeLeader));
+window.addEventListener("keydown", (e) => e.key === "Escape" && closeLeader());
+
+/* ------------------------------------------------------------
+   Footer mosaic (after digitalmetal.io): black cells over the light
+   band; their opacity shifts a few at a time. The logo and name are
+   sized to run across the full width.
+   ------------------------------------------------------------ */
+const ftrEl = $(".ftr");
+const mosaic = $("#ftrMosaic");
+const ftrBrand = $("#ftrBrand");
+let cells = [];
+
+// darker at the top and bottom, more open through the band of light
+function cellOpacity(row, rows) {
+  const t = rows > 1 ? row / (rows - 1) : 0.5;
+  const band = Math.exp(-Math.pow((t - 0.56) / 0.22, 2)); // 1 in the band, 0 away from it
+  const r = Math.random();
+  if (r < 0.42 * band + 0.05) return 0;
+  if (r < 0.78 * band + 0.12) return +(0.15 + Math.random() * 0.55).toFixed(2);
+  return 1;
+}
+
+function buildMosaic() {
+  const cs = getComputedStyle(mosaic);
+  const cell = parseFloat(cs.gridAutoRows) || 100;
+  const cols = Math.ceil(ftrEl.offsetWidth / (cell + 1)) + 1;
+  const rows = Math.ceil(ftrEl.offsetHeight / (cell + 1)) + 1;
+  const frag = document.createDocumentFragment();
+  cells = [];
+  for (let r = 0; r < rows; r++) {
+    for (let c = 0; c < cols; c++) {
+      const el = document.createElement("i");
+      el.style.setProperty("--o", cellOpacity(r, rows));
+      el.dataset.row = r;
+      frag.append(el);
+      cells.push(el);
+    }
+  }
+  mosaic.replaceChildren(frag);
+  mosaic.dataset.rows = rows;
+}
+
+function fitBrand() {
+  if (window.innerWidth <= 600) { ftrBrand.style.removeProperty("--brand-fs"); return; }
+  ftrBrand.style.setProperty("--brand-fs", "100px");
+  const natural = ftrBrand.scrollWidth;
+  const avail = ftrBrand.parentElement.clientWidth - parseFloat(getComputedStyle(ftrBrand.parentElement).paddingLeft) - parseFloat(getComputedStyle(ftrBrand.parentElement).paddingRight);
+  if (natural > 0) ftrBrand.style.setProperty("--brand-fs", `${(100 * avail / natural).toFixed(2)}px`);
+}
+
+buildMosaic();
+fitBrand();
+(document.fonts ? document.fonts.ready : Promise.resolve()).then(fitBrand);
+let ftrResize = 0;
+window.addEventListener("resize", () => {
+  clearTimeout(ftrResize);
+  ftrResize = setTimeout(() => { buildMosaic(); fitBrand(); }, 150);
+});
+
+if (!reduceMotion) {
+  let shimmer = 0;
+  const tick = () => {
+    const rows = +mosaic.dataset.rows || 1;
+    const n = Math.max(3, Math.round(cells.length * 0.06));
+    for (let k = 0; k < n; k++) {
+      const el = cells[(Math.random() * cells.length) | 0];
+      if (el) el.style.setProperty("--o", cellOpacity(+el.dataset.row, rows));
+    }
+  };
+  new IntersectionObserver((entries) => entries.forEach((e) => {
+    clearInterval(shimmer);
+    if (e.isIntersecting) shimmer = setInterval(tick, 900);
+  })).observe(ftrEl);
+}
 
 /* ------------------------------------------------------------
    Small touches
