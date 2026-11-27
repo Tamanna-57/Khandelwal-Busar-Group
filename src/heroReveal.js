@@ -13,6 +13,8 @@
         behind the text and the figures count up from zero.
    ------------------------------------------------------------ */
 
+import { INDIA_PATH } from "./indiaPath.js";
+
 const clamp01 = (v) => Math.min(1, Math.max(0, v));
 const range = (q, a, b) => clamp01((q - a) / (b - a));
 const easeOutExpo = (t) => (t >= 1 ? 1 : 1 - Math.pow(2, -10 * t));
@@ -26,9 +28,17 @@ const MARK = { cx: 306, cy: 334, w: 612, h: 668, fx: 235, fy: 330 };
 export function initHeroReveal({ hero, metrics, reduceMotion }) {
   const pin = hero.querySelector(".hero__pin");
   const body = hero.querySelector(".hero__body");
+  // navy plane on a canvas: Safari re-rasterises an SVG mask on every frame, a canvas
+  // is redrawn only when the hole changes and the tilt stays on the compositor
   const plane = hero.querySelector(".hero__plane");
-  const fills = [...plane.querySelectorAll(".hero__plane-fill")];
-  const hole = plane.querySelector(".hero__hole");
+  const pctx = plane.getContext("2d");
+  const india = new Path2D(INDIA_PATH);
+  const navy = getComputedStyle(hero).getPropertyValue("--navy").trim() || "#0d1a3a";
+  let pScale = 1;
+  let lastHole = "";
+  const video = hero.querySelector(".hero__video");
+  const pauseBtn = hero.querySelector(".hero__pause");
+  let userPaused = reduceMotion;
   const finalEl = hero.querySelector(".hero__final");
   const textEl = hero.querySelector("#heroFinalText");
   const metricsEl = hero.querySelector("#heroMetrics");
@@ -66,10 +76,13 @@ export function initHeroReveal({ hero, metrics, reduceMotion }) {
     // the plane is drawn larger than the screen so its edges never show while tilted
     PW = Math.round(W * 1.5);
     PH = Math.round(H * 1.5);
-    plane.setAttribute("viewBox", `0 0 ${PW} ${PH}`);
-    plane.setAttribute("width", PW);
-    plane.setAttribute("height", PH);
-    fills.forEach((r) => { r.setAttribute("width", PW); r.setAttribute("height", PH); });
+    // keep the bitmap to a few megapixels: the hole edge stays crisp, the redraw stays cheap
+    pScale = Math.min(window.devicePixelRatio || 1, 1.5, Math.sqrt(4.5e6 / (PW * PH)));
+    plane.width = Math.round(PW * pScale);
+    plane.height = Math.round(PH * pScale);
+    plane.style.width = `${PW}px`;
+    plane.style.height = `${PH}px`;
+    lastHole = "";
     blocks.resize(W, H);
   }
 
@@ -107,11 +120,10 @@ export function initHeroReveal({ hero, metrics, reduceMotion }) {
     const s = holeW / MARK.w;
     const ox = MARK.fx + (MARK.cx - MARK.fx) * t;
     const oy = MARK.fy + (MARK.cy - MARK.fy) * t;
-    hole.setAttribute(
-      "transform",
-      `translate(${PW / 2} ${PH / 2}) scale(${s.toFixed(5)}) translate(${-ox.toFixed(2)} ${-oy.toFixed(2)})`
-    );
+    drawPlane(t, s, ox, oy);
     plane.style.visibility = t > 0 ? "visible" : "hidden";
+    // the video is hidden once the screen is navy: stop decoding it
+    syncVideo(t < 1 && hero.getBoundingClientRect().bottom > 0);
     const tilt = 15 * (1 - range(q, 0.74, 0.84));
     plane.style.transform = `translate(-50%, -50%) perspective(1400px) rotateX(${tilt.toFixed(2)}deg)`;
 
@@ -140,6 +152,38 @@ export function initHeroReveal({ hero, metrics, reduceMotion }) {
     }
   }
 
+  function drawPlane(t, s, ox, oy) {
+    if (t <= 0) return;
+    const key = t >= 1 ? "solid" : `${s.toFixed(4)}|${ox.toFixed(1)}|${oy.toFixed(1)}`;
+    if (key === lastHole) return;
+    lastHole = key;
+    pctx.setTransform(1, 0, 0, 1, 0, 0);
+    pctx.globalCompositeOperation = "source-over";
+    pctx.fillStyle = navy;
+    pctx.fillRect(0, 0, plane.width, plane.height);
+    if (t >= 1 || s <= 0) return;
+    pctx.globalCompositeOperation = "destination-out";
+    pctx.setTransform(pScale * s, 0, 0, pScale * s, pScale * (PW / 2 - ox * s), pScale * (PH / 2 - oy * s));
+    pctx.fill(india);
+    pctx.globalCompositeOperation = "source-over";
+  }
+
+  function syncVideo(visible) {
+    const want = visible && !userPaused && !document.hidden;
+    if (want && video.paused) video.play().catch(() => {});
+    else if (!want && !video.paused) video.pause();
+  }
+  pauseBtn.setAttribute("aria-pressed", String(userPaused));
+  pauseBtn.querySelector(".sr-only").textContent = userPaused ? "Play background video" : "Pause background video";
+  pauseBtn.addEventListener("click", () => {
+    userPaused = !userPaused;
+    pauseBtn.setAttribute("aria-pressed", String(userPaused));
+    pauseBtn.querySelector(".sr-only").textContent = userPaused ? "Play background video" : "Pause background video";
+    update();
+  });
+  document.addEventListener("visibilitychange", () => update());
+  if (reduceMotion) video.removeAttribute("autoplay");
+
   let raf = 0;
   const onScroll = () => {
     if (raf) return;
@@ -148,7 +192,8 @@ export function initHeroReveal({ hero, metrics, reduceMotion }) {
   size();
   update();
   window.addEventListener("scroll", onScroll, { passive: true });
-  window.addEventListener("resize", () => { size(); update(); });
+  let resizeT = 0;
+  window.addEventListener("resize", () => { clearTimeout(resizeT); resizeT = setTimeout(() => { size(); update(); }, 120); });
 }
 
 /* ------------------------------------------------------------
