@@ -23,20 +23,32 @@ $("#aboutBody").innerHTML = about.body.map((p) => `<p>${p}</p>`).join("");
 $("#aboutSinceLbl").textContent = about.sinceLabel;
 $("#aboutSince").textContent = about.since;
 $("#aboutImg").src = about.image;
+$("#aboutImg").srcset = `${about.image.replace(".webp", "-800.webp")} 800w, ${about.image} 1600w`;
+$("#aboutImg").sizes = "(max-width: 900px) 100vw, 50vw";
+$("#aboutImg").decoding = "async";
 $("#aboutImg").alt = about.imageAlt;
 
-const logoItems = clients.map(([n, src]) => `<li><img src="${src}" alt="${n}" loading="lazy" /></li>`).join("");
+const logoItems = clients.map(([n, src]) => `<li><img src="${src}" alt="${n}" loading="lazy" decoding="async" /></li>`).join("");
 // Two copies make the loop seamless; the second copy is hidden from screen readers.
 $("#logos").innerHTML = reduceMotion
   ? logoItems
   : logoItems + logoItems.replaceAll("<li>", '<li aria-hidden="true">').replaceAll('alt="', 'alt="" data-alt="');
+
+const marqueePause = $(".marquee__pause");
+if (reduceMotion) marqueePause.hidden = true;
+marqueePause.addEventListener("click", () => {
+  const paused = marqueePause.getAttribute("aria-pressed") !== "true";
+  marqueePause.setAttribute("aria-pressed", String(paused));
+  marqueePause.textContent = paused ? "Play logos" : "Pause logos";
+  $(".marquee").classList.toggle("is-paused", paused);
+});
 
 /* Companies: one full-screen panel per company with its wordmark, details and figures */
 const hexA = (hex, a) => `rgba(${hex.match(/\w\w/g).map((h) => parseInt(h, 16)).join(", ")}, ${a})`;
 
 $("#cosTrack").innerHTML = firms
   .map(
-    (f, i) => `<article class="co" id="co-${f.id}" style="--co:${f.accent};--glow:${hexA(f.accent, 0.42)};--tint-a:${f.tint[0]};--tint-b:${f.tint[1]};--fill:url('${f.image}')" aria-labelledby="co-${f.id}-name">
+    (f, i) => `<article class="co" id="co-${f.id}" style="--co:${f.accent};--glow:${hexA(f.accent, 0.42)};--tint-a:${f.tint[0]};--tint-b:${f.tint[1]};--fill:url('${f.image}');--fill-sm:url('${f.image.replace(".webp", "-800.webp")}')" aria-labelledby="co-${f.id}-name">
       <div class="co__bg" aria-hidden="true"><i class="co__photo"></i><i class="co__glow"></i><i class="co__grid"></i></div>
       <div class="co__in">
         <p class="co__top"><span class="co__eyebrow">Our companies</span><span class="co__idx">${pad2(i + 1)}<small>/${pad2(firms.length)}</small></span><span class="co__cat">${f.category}</span></p>
@@ -48,7 +60,7 @@ $("#cosTrack").innerHTML = firms
               <div><h3 class="co__name" id="co-${f.id}-name">${f.name}</h3><p class="co__meta">${f.meta}</p></div>
             </div>
             <p class="co__text">${f.tagline}</p>
-            <a class="co__visit" href="${f.url}" target="_blank" rel="noopener">Visit website<span aria-hidden="true">↗</span></a>
+            <a class="co__visit" href="${f.url}" target="_blank" rel="noopener">Visit website<span aria-hidden="true">↗</span><span class="sr-only"> for ${f.name} (opens in a new tab)</span></a>
           </div>
           <dl class="co__figs">${f.figures
             .map(([v, l], k) => `<div class="co__fig" style="--k:${k}"><dt>${l}</dt><dd>${v}</dd></div>`)
@@ -138,7 +150,8 @@ function updateHeader() {
   }
 }
 hdr.addEventListener("animationend", () => hdr.classList.remove("is-popping"));
-window.addEventListener("scroll", updateHeader, { passive: true });
+let hdrRaf = 0;
+window.addEventListener("scroll", () => { if (!hdrRaf) hdrRaf = requestAnimationFrame(() => { hdrRaf = 0; updateHeader(); }); }, { passive: true });
 window.addEventListener("resize", () => { activeId = undefined; updateHeader(); });
 updateHeader();
 
@@ -213,8 +226,7 @@ mm.add("(prefers-reduced-motion: no-preference)", () => {
     cosFirms.forEach((f) => {
       // the wordmark drifts against its panel, its photo fill pans and the backdrop photo lags
       const d = Math.max(-1.5, Math.min(1.5, (f.c + x - vw / 2) / vw));
-      f.mark.style.transform = `translate3d(${(-d * vw * 0.12).toFixed(1)}px, 0, 0)`;
-      f.mark.style.backgroundPosition = `${(50 + d * 40).toFixed(2)}% 50%`;
+      f.mark.style.transform = `translate3d(${(-d * vw * 0.22).toFixed(1)}px, 0, 0)`;
       f.photo.style.transform = `translate3d(${(-d * vw * 0.18).toFixed(1)}px, 0, 0)`;
       f.el.classList.toggle("is-in", inView && Math.abs(d) < 0.3);
     });
@@ -237,13 +249,26 @@ mm.add("(prefers-reduced-motion: no-preference)", () => {
   });
   render(st.scroll() - st.start);
 
+  // keyboard users: focusing a link inside a panel brings that panel on screen
+  const onFocus = (e) => {
+    const i = cosFirms.findIndex((f) => f.el.contains(e.target));
+    if (i < 0) return;
+    let at = 0, hold = 0;
+    for (const seg of plan.segs) { if (seg.type === "hold" && hold++ === i) { at = seg.start + seg.len / 2; break; } }
+    // focusing can scroll the clipped containers sideways; undo that, the row is moved by transform
+    [cos, cos.querySelector(".cos__pin"), stage].forEach((el) => el && (el.scrollLeft = 0));
+    window.scrollTo({ top: st.start + at, behavior: "auto" });
+  };
+  cosTrack.addEventListener("focusin", onFocus);
+
   return () => {
+    cosTrack.removeEventListener("focusin", onFocus);
     cos.classList.remove("is-pinned");
     story.style.marginTop = "";
     cosTrack.style.transform = stage.style.transform = progressBar.style.transform = "";
     dim.style.opacity = 0;
     cosFirms.forEach((f) => {
-      f.mark.style.transform = f.mark.style.backgroundPosition = f.photo.style.transform = "";
+      f.mark.style.transform = f.photo.style.transform = "";
       f.el.classList.remove("is-in");
     });
   };
@@ -307,7 +332,8 @@ years.forEach((y) =>
     window.scrollTo({ top: top + span * (i / (nYears - 1)) + 1, behavior: "smooth" });
   })
 );
-window.addEventListener("scroll", updateStory, { passive: true });
+let storyRaf = 0;
+window.addEventListener("scroll", () => { if (!storyRaf) storyRaf = requestAnimationFrame(() => { storyRaf = 0; updateStory(); }); }, { passive: true });
 window.addEventListener("resize", updateStory);
 updateStory();
 
@@ -317,11 +343,11 @@ updateStory();
 $("#leadGrid").innerHTML = leaders
   .map(
     (m, i) => `<li class="lead__card">
-      <div class="lead__img"><img src="${m.image}" alt="${m.name}" loading="lazy" /></div>
+      <div class="lead__img"><img src="${m.image}" alt="${m.name}" width="480" height="640" loading="lazy" decoding="async" /></div>
       <h3 class="lead__name">${m.name}</h3>
       <p class="lead__role">${m.role}</p>
       <p class="lead__co">${m.company}</p>
-      <button class="lead__more" type="button" data-i="${i}">Read about ${m.first} <span aria-hidden="true">↗</span></button>
+      <button class="lead__more" type="button" data-i="${i}" aria-haspopup="dialog">Read about ${m.first} <span aria-hidden="true">↗</span></button>
     </li>`
   )
   .join("");
@@ -350,7 +376,17 @@ function closeLeader() {
 }
 $$(".lead__more").forEach((b) => b.addEventListener("click", () => openLeader(Number(b.dataset.i))));
 $$("[data-close]", leadModal).forEach((el) => el.addEventListener("click", closeLeader));
-window.addEventListener("keydown", (e) => e.key === "Escape" && closeLeader());
+window.addEventListener("keydown", (e) => {
+  if (leadModal.hidden) return;
+  if (e.key === "Escape") return closeLeader();
+  if (e.key !== "Tab") return;
+  // keep focus inside the open profile
+  const f = $$('button, [href], [tabindex]:not([tabindex="-1"])', leadModal).filter((el) => el.offsetParent !== null);
+  if (!f.length) return;
+  const first = f[0], last = f[f.length - 1];
+  if (e.shiftKey && document.activeElement === first) { e.preventDefault(); last.focus(); }
+  else if (!e.shiftKey && document.activeElement === last) { e.preventDefault(); first.focus(); }
+});
 
 /* ------------------------------------------------------------
    Footer mosaic (after digitalmetal.io): black cells over the light
@@ -433,8 +469,6 @@ if (!reduceMotion) {
     yPercent: 4, scale: 1.08, ease: "none",
     scrollTrigger: { trigger: ".about", start: "top bottom", end: "bottom top", scrub: true },
   });
-} else {
-  $(".hero__video").pause();
 }
 
 window.addEventListener("load", () => { ScrollTrigger.refresh(); updateHeader(); });
